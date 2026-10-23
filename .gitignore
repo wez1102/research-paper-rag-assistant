@@ -1,0 +1,21 @@
+# secrets
+.env
+
+# the index is rebuilt with `python ingest.py`, so it doesn't belong in git
+data/chroma/
+data/chunks_*.jsonl
+
+# local downloads / caches
+*.tar
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# experiment caches (embeddings, cross-encoder scores)
+data/cache/
+
+# scratch files from the Ollama answer runs
+.relay/

@@ -1,0 +1,11 @@
+.env
+.venv/
+venv/
+data/chroma/
+data/chunks_*.jsonl
+*.tar
+__pycache__/
+.pytest_cache/
+.git/
+data/cache/
+.relay/

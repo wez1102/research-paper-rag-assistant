@@ -1,0 +1,2 @@
+mode,scope,provider,model,n_questions,token_f1,citation_accuracy,refusal_rate,off_topic_refusal_rate,median_generation_s
+hybrid_rerank,paper,extractive,,30,0.1506636152830699,1.0,0.0,0.9,0.00023062550098984502

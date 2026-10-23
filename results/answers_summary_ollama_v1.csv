@@ -1,0 +1,2 @@
+mode,scope,provider,model,n_questions,token_f1,citation_accuracy,refusal_rate,off_topic_refusal_rate,median_generation_s,prompt_version
+hybrid_rerank,paper,ollama,qwen3:8b,30,0.2968248134794657,1.0,0.03333333333333333,1.0,10.930399999976158,v1

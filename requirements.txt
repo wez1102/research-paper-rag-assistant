@@ -1,0 +1,23 @@
+# Pinned so the index and the evaluation numbers can be reproduced exactly.
+# Tested on Python 3.10-3.11 (CPU only).
+torch==2.9.1
+sentence-transformers==6.2.0
+transformers==5.20.2
+chromadb==1.5.9
+rank-bm25==0.2.2
+huggingface-hub==2.2.0
+numpy==2.2.6
+pandas==2.3.3
+pyarrow==25.0.1
+streamlit==1.65.0
+# web app (server.py)
+fastapi==0.161.1
+uvicorn==0.54.0
+python-dotenv==1.2.4
+tqdm==4.70.1
+# LLM clients - only the one you use actually matters
+openai==3.36.1
+anthropic==2.1.0
+# tests
+pytest==9.1.1
+httpx==0.28.1        # FastAPI's TestClient

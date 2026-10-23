@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research Paper Assistant</title>
+  <meta name="description" content="Ask questions about 50 NLP research papers and get answers cited to the paper and section.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='6' y='3' width='20' height='26' rx='2' fill='%23F4F6F5' stroke='%2317223B' stroke-width='2'/%3E%3Crect x='9' y='13' width='14' height='5' fill='%23F3EE5A'/%3E%3Cpath d='M10 9h12M10 15.5h12M10 22h8' stroke='%2317223B' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="preload" href="/static/fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <a class="wordmark" href="/" aria-label="Research Paper Assistant, start over">
+        <svg class="wordmark-icon" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="6" y="3" width="20" height="26" rx="2" class="icon-page"/>
+          <rect x="9" y="13" width="14" height="5" class="icon-mark"/>
+          <path d="M10 9h12M10 15.5h12M10 22h8" class="icon-lines"/>
+        </svg>
+        <span>Research Paper Assistant</span>
+      </a>
+      <p class="tagline" id="tagline">Cited answers from NLP research papers</p>
+      <button class="link-button" type="button" id="open-benchmark"><span class="link-long">How well does it work?</span><span class="link-short">Results</span></button>
+    </div>
+  </header>
+
+  <section class="controls" aria-label="Answer settings">
+    <div class="controls-inner">
+      <div class="control control-model">
+        <label for="model">Model</label>
+        <div class="model-row">
+          <select id="model" disabled><option>Looking for models…</option></select>
+          <button class="icon-button" type="button" id="refresh-models" aria-label="Check for models again" title="Check for models again">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3v4h-4"/></svg>
+          </button>
+        </div>
+        <p class="status" id="model-status" role="status"></p>
+      </div>
+
+      <fieldset class="control control-mode">
+        <legend>Search</legend>
+        <div class="segmented" id="mode"></div>
+      </fieldset>
+
+      <div class="control control-paper">
+        <label for="paper">Papers</label>
+        <select id="paper"><option value="">All papers</option></select>
+      </div>
+
+      <div class="control control-k">
+        <label for="k">Passages</label>
+        <div class="stepper">
+          <button type="button" data-step="-1" aria-label="Fewer passages">−</button>
+          <input id="k" type="number" min="1" max="10" value="5" inputmode="numeric">
+          <button type="button" data-step="1" aria-label="More passages">+</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main id="thread" class="thread" aria-live="polite">
+    <article class="turn intro" id="intro">
+      <div class="turn-main">
+        <h1>Ask the papers.</h1>
+        <p class="lede">
+          Every answer is written only from passages found in the papers, and each claim
+          points to the paper and section it came from. The passages appear in the margin,
+          so you can check the answer against the source.
+        </p>
+        <h2 class="examples-title">Try one of these</h2>
+        <ul class="examples" id="examples"></ul>
+      </div>
+      <aside class="margin margin-intro" aria-hidden="true">
+        <div class="margin-note">
+          <span class="margin-num">1</span>
+          <p>Sources show up here, numbered to match the answer. The sentence that best supports
+          the answer gets <mark>highlighted</mark>.</p>
+        </div>
+      </aside>
+    </article>
+  </main>
+
+  <form class="composer" id="composer">
+    <div class="composer-inner">
+      <label class="visually-hidden" for="question">Your question</label>
+      <textarea id="question" rows="1" maxlength="500" placeholder="Ask a question about the papers" required></textarea>
+      <button class="ask" type="submit" id="ask">Ask</button>
+    </div>
+    <p class="composer-hint">Enter to ask, Shift + Enter for a new line. Press / to jump here.</p>
+  </form>
+
+  <dialog id="benchmark" aria-labelledby="benchmark-title">
+    <div class="dialog-head">
+      <h2 id="benchmark-title">How well does it work?</h2>
+      <button class="icon-button" type="button" id="close-benchmark" aria-label="Close">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
+      </button>
+    </div>
+    <div class="dialog-body" id="benchmark-body"><p>Loading the evaluation results…</p></div>
+  </dialog>
+
+  <template id="turn-template">
+    <article class="turn">
+      <div class="turn-main">
+        <h2 class="question"></h2>
+        <div class="answer" data-state="searching">
+          <p class="answer-status">Searching the papers…</p>
+          <div class="answer-body"></div>
+        </div>
+        <div class="answer-meta"></div>
+      </div>
+      <aside class="margin" aria-label="Sources for this answer">
+        <button class="margin-toggle" type="button" aria-expanded="false" hidden></button>
+        <ol class="sources"></ol>
+      </aside>
+    </article>
+  </template>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

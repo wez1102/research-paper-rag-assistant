@@ -1,0 +1,10 @@
+{
+  "best_first_stage": "hybrid_maxp_dense_heavy",
+  "best_rerank": "rerank[hybrid,d=30,max,prior=0.5]",
+  "best_rerank_config": {
+    "base": "hybrid",
+    "depth": 30.0,
+    "how": "max",
+    "prior": 0.5
+  }
+}
