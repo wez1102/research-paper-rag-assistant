@@ -1,0 +1,6 @@
+# Lint only for real bugs (syntax errors, undefined names, unused imports); no style policing.
+line-length = 120
+extend-exclude = ["data", "results", "static"]
+
+[lint]
+select = ["E9", "F"]

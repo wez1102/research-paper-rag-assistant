@@ -1,0 +1,31 @@
+{
+  "config": "bge-small-en-v1.5|ms-marco-MiniLM-L-6-v2|cand=30|how=maxp|prior=0.5|rrfw=1.0,1.0|pboost=0.0|maxlen=512",
+  "tolerance_questions": 1,
+  "rerank_subset": 40,
+  "metrics": {
+    "dense/paper": {
+      "hits@5": 105,
+      "n": 144
+    },
+    "dense/corpus": {
+      "hits@5": 50,
+      "n": 144
+    },
+    "hybrid/paper": {
+      "hits@5": 109,
+      "n": 144
+    },
+    "hybrid/corpus": {
+      "hits@5": 52,
+      "n": 144
+    },
+    "hybrid_rerank/paper": {
+      "hits@5": 32,
+      "n": 40
+    },
+    "hybrid_rerank/corpus": {
+      "hits@5": 20,
+      "n": 40
+    }
+  }
+}

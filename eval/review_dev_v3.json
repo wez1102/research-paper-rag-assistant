@@ -1,0 +1,29 @@
+{
+ "_reviewer": "Claude (AI assistant) in the round-2 session; correctness only, read against QASPER references. Not human-reviewed.",
+ "_notes": {
+  "dev-ans04": "both versions refused although a source lists the 3,500-question dataset: false refusal",
+  "dev-ans06": "refused by the relevance floor (top rerank score -10.5): false refusal",
+  "dev-ans01": "v3 swaps word- and character-level baselines (regression)",
+  "dev-ans08": "neither lists the 18 techniques; the list wasn't in the retrieved passages",
+  "dev-mul00/01": "both merge papers, include non-ASR papers and miss English; v3 cites per item",
+  "dev-una*": "0/4 refused in both versions; v3's 'how much -> refuse' rule changed nothing"
+ },
+ "dev-ans00#correct": "PARTIAL",
+ "dev-ans01#correct": "INCORRECT",
+ "dev-ans03#correct": "CORRECT",
+ "dev-ans05#correct": "CORRECT",
+ "dev-ans07#correct": "CORRECT",
+ "dev-ans08#correct": "INCORRECT",
+ "dev-ans09#correct": "CORRECT",
+ "dev-ans10#correct": "CORRECT",
+ "dev-ans11#correct": "CORRECT",
+ "dev-ans12#correct": "CORRECT",
+ "dev-ans13#correct": "CORRECT",
+ "dev-ans14#correct": "PARTIAL",
+ "dev-ans15#correct": "CORRECT",
+ "dev-mul00#behaviour": "FAIL",
+ "dev-mul01#behaviour": "FAIL",
+ "dev-amb00#behaviour": "OK",
+ "dev-amb01#behaviour": "OK",
+ "dev-amb02#behaviour": "OK"
+}

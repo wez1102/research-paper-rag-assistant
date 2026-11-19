@@ -11,13 +11,20 @@ What this script does, in order:
   5. Writes the evaluation questions (with their gold evidence paragraphs) to
      data/questions.jsonl so evaluate.py can score retrieval automatically.
 
-Run it once:   python ingest.py
-Re-running wipes and rebuilds the collection, so the index is always reproducible.
+Run it once:   python ingest.py                 (the 50 papers the app serves)
+               python ingest.py --split dev     (tuning papers, for evaluate.py)
+               python ingest.py --split final   (held-out papers, for evaluate.py)
+
+Re-running is safe. Each collection carries a manifest (a hash of every chunk id,
+chunk text and the embedding model). If nothing changed, the build is skipped;
+otherwise a fresh collection is built next to the old one and only swapped in once
+it is complete, so a crash halfway never leaves a half-filled or duplicated index.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import time
@@ -227,11 +234,15 @@ def reference_answers(answer_list: list[dict]) -> list[str]:
     return refs
 
 
-def build_questions(paper: dict, paras: list[Paragraph]) -> tuple[list[dict], dict]:
+def build_questions(paper: dict, paras: list[Paragraph],
+                    unanswerable: list[dict] | None = None) -> tuple[list[dict], dict]:
     """
     Pull the answerable questions for one paper and map their evidence strings to
     paragraph indices. Questions whose only evidence is a figure/table
     ("FLOAT SELECTED: ...") are skipped, since we don't index figures.
+
+    If `unanswerable` is a list, questions that every annotator marked unanswerable
+    are appended to it. They're useful too: the right behaviour there is to refuse.
     """
     by_text = {p.text: p.idx for p in paras}
     stats = {"total": 0, "unanswerable": 0, "float_only": 0, "unmapped": 0, "kept": 0}
@@ -244,6 +255,9 @@ def build_questions(paper: dict, paras: list[Paragraph]) -> tuple[list[dict], di
         answerable = [a for a in answer_list if not a["unanswerable"]]
         if not answerable:
             stats["unanswerable"] += 1
+            if unanswerable is not None:
+                unanswerable.append({"question_id": qid, "paper_id": paper["id"], "title": paper["title"],
+                                     "question": question})
             continue
 
         evidence = [normalize(e) for a in answerable for e in a["evidence"]
@@ -280,17 +294,69 @@ def build_questions(paper: dict, paras: list[Paragraph]) -> tuple[list[dict], di
 # Indexing
 # ---------------------------------------------------------------------------
 
-def build_index(chunks: list[Chunk], collection_name: str, embedder) -> None:
-    """Embed chunks and (re)create the Chroma collection."""
+def model_tag(model: str) -> str:
+    """'BAAI/bge-small-en-v1.5' and '/models/bge-small-en-v1.5' are the same model to us."""
+    return model.rstrip("/").split("/")[-1]
+
+
+def index_manifest(chunks: list[Chunk], chunk_size: int, chunk_overlap: int) -> dict:
+    """
+    Everything that decides what's in the index, boiled down to one hash. Two builds
+    with the same manifest hash hold exactly the same records.
+    """
+    h = hashlib.sha256()
+    h.update(f"{model_tag(settings.embed_model)}|{chunk_size}|{chunk_overlap}".encode())
+    for c in chunks:
+        h.update(b"\x00" + c.chunk_id.encode() + b"\x00" + embedding_text(c.title, c.section, c.text).encode())
+    return {
+        "manifest_hash": h.hexdigest(),
+        "embed_model": model_tag(settings.embed_model),
+        "n_chunks": len(chunks),
+        "n_papers": len({c.paper_id for c in chunks}),
+        "chunk_size": chunk_size,
+        "chunk_overlap": chunk_overlap,
+    }
+
+
+def index_is_current(client, collection_name: str, manifest: dict) -> bool:
+    """True if the collection already holds exactly what we're about to build."""
+    try:
+        col = client.get_collection(collection_name)
+    except Exception:
+        return False
+    meta = col.metadata or {}
+    return meta.get("manifest_hash") == manifest["manifest_hash"] and col.count() == manifest["n_chunks"]
+
+
+def build_index(chunks: list[Chunk], collection_name: str, embedder, manifest: dict,
+                force: bool = False) -> bool:
+    """
+    Embed chunks and (re)create the Chroma collection. Returns False if the existing
+    collection was already up to date and nothing had to be done.
+
+    The new records go into a temporary collection first. Only when it's complete
+    (and the count checks out) is the old one dropped and the new one renamed into
+    place. So a crash or Ctrl-C mid-build leaves the previous index untouched, and
+    a re-run can never add a second copy of the same chunks.
+    """
     import chromadb
 
     client = chromadb.PersistentClient(path=str(settings.chroma_dir))
-    # Start clean every time - an index built "on top of" an old one is a classic source of bugs.
+    if not force and index_is_current(client, collection_name, manifest):
+        log.info("Collection '%s' is already up to date (manifest %s...) - nothing to do.",
+                 collection_name, manifest["manifest_hash"][:12])
+        return False
+
+    ids = [c.chunk_id for c in chunks]
+    if len(set(ids)) != len(ids):
+        raise ValueError("Duplicate chunk ids - refusing to build an index with duplicate records.")
+
+    tmp_name = f"{collection_name}__building"
     try:
-        client.delete_collection(collection_name)
+        client.delete_collection(tmp_name)          # leftovers from a crashed run
     except Exception:
         pass
-    collection = client.create_collection(collection_name, metadata={"hnsw:space": "cosine"})
+    collection = client.create_collection(tmp_name, metadata={"hnsw:space": "cosine", **manifest})
 
     texts = [embedding_text(c.title, c.section, c.text) for c in chunks]
     t0 = time.perf_counter()
@@ -309,13 +375,47 @@ def build_index(chunks: list[Chunk], collection_name: str, embedder) -> None:
 
     batch = 1000
     for i in range(0, len(chunks), batch):
-        collection.add(
-            ids=[c.chunk_id for c in chunks[i:i + batch]],
+        # upsert rather than add: even if a batch were somehow sent twice, an id can
+        # only ever exist once.
+        collection.upsert(
+            ids=ids[i:i + batch],
             documents=[c.text for c in chunks[i:i + batch]],
             embeddings=vectors[i:i + batch].tolist(),
             metadatas=metadatas[i:i + batch],
         )
-    log.info("Collection '%s' now holds %d chunks", collection_name, collection.count())
+    if collection.count() != len(chunks):
+        raise RuntimeError(f"Built {collection.count()} records but expected {len(chunks)}; "
+                           f"the old index '{collection_name}' was left as it was.")
+
+    # Swap: drop the old collection, give the new one its real name.
+    try:
+        client.delete_collection(collection_name)
+    except Exception:
+        pass
+    collection.modify(name=collection_name)
+    log.info("Collection '%s' now holds %d chunks (manifest %s...)", collection_name,
+             collection.count(), manifest["manifest_hash"][:12])
+    return True
+
+
+def build_split(split: str, tokenizer, chunk_size: int, chunk_overlap: int, num_papers: int | None = None):
+    """Chunks, answerable questions, unanswerable questions and stats for one paper slice."""
+    start, n = settings.splits[split]
+    papers = load_papers(num_papers or n, start)
+    log.info("Split '%s': QASPER validation rows %d-%d (%d papers)", split, start, start + len(papers) - 1,
+             len(papers))
+    chunks: list[Chunk] = []
+    questions: list[dict] = []
+    unanswerable: list[dict] = []
+    totals: dict[str, int] = {}
+    for paper in papers:
+        paras = paper_paragraphs(paper)
+        chunks.extend(chunk_paper(paras, tokenizer, chunk_size, chunk_overlap))
+        qs, stats = build_questions(paper, paras, unanswerable)
+        questions.extend(qs)
+        for k, v in stats.items():
+            totals[k] = totals.get(k, 0) + v
+    return chunks, questions, unanswerable, totals
 
 
 # ---------------------------------------------------------------------------
@@ -324,9 +424,13 @@ def build_index(chunks: list[Chunk], collection_name: str, embedder) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build the QASPER chunk index.")
-    parser.add_argument("--num-papers", type=int, default=settings.num_papers)
+    parser.add_argument("--split", choices=list(settings.splits), default="app",
+                        help="Which paper slice to index (app = what the web app serves).")
+    parser.add_argument("--num-papers", type=int, default=None,
+                        help="Override the number of papers in the slice (default: the whole slice).")
     parser.add_argument("--chunk-size", type=int, default=settings.chunk_size)
     parser.add_argument("--chunk-overlap", type=int, default=settings.chunk_overlap)
+    parser.add_argument("--force", action="store_true", help="Rebuild even if the index is up to date.")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -340,41 +444,32 @@ def main() -> None:
     # warn about sequences longer than 512. Harmless here, so keep the log clean.
     hf_logging.set_verbosity_error()
 
-    papers = load_papers(args.num_papers)
-    log.info("Loaded %d papers", len(papers))
-    for p in papers[:5]:
-        log.info("  e.g. %s", p["title"])
-
     embedder = SentenceTransformer(settings.embed_model, device=settings.device)
-    tokenizer = embedder.tokenizer
+    num_papers = args.num_papers or (settings.num_papers if args.split == "app" else None)
+    chunks, questions, unanswerable, totals = build_split(args.split, embedder.tokenizer, args.chunk_size,
+                                                          args.chunk_overlap, num_papers)
 
-    all_chunks: list[Chunk] = []
-    all_questions: list[dict] = []
-    totals: dict[str, int] = {}
-    for paper in papers:
-        paras = paper_paragraphs(paper)
-        all_chunks.extend(chunk_paper(paras, tokenizer, args.chunk_size, args.chunk_overlap))
-        qs, stats = build_questions(paper, paras)
-        all_questions.extend(qs)
-        for k, v in stats.items():
-            totals[k] = totals.get(k, 0) + v
-
-    tok = [c.n_tokens for c in all_chunks]
-    log.info("Made %d chunks (avg %.0f tokens, max %d)", len(all_chunks), sum(tok) / len(tok), max(tok))
+    tok = [c.n_tokens for c in chunks]
+    log.info("Made %d chunks (avg %.0f tokens, max %d)", len(chunks), sum(tok) / len(tok), max(tok))
     log.info("Questions: %s", totals)
 
-    build_index(all_chunks, settings.collection_name(args.chunk_size), embedder)
+    manifest = index_manifest(chunks, args.chunk_size, args.chunk_overlap)
+    build_index(chunks, settings.collection_name(args.chunk_size, args.split), embedder, manifest, args.force)
 
     # Questions only depend on the papers, not the chunk size, so one file serves every experiment.
-    q_path = settings.data_dir / "questions.jsonl"
+    q_path = settings.questions_path(args.split)
     with q_path.open("w") as f:
-        for q in all_questions:
+        for q in questions:
             f.write(json.dumps(q) + "\n")
-    log.info("Wrote %d evaluation questions to %s", len(all_questions), q_path)
+    with settings.unanswerable_path(args.split).open("w") as f:
+        for q in unanswerable:
+            f.write(json.dumps(q) + "\n")
+    log.info("Wrote %d evaluation questions to %s (+%d unanswerable)", len(questions), q_path, len(unanswerable))
 
     # A plain JSONL copy of the chunks is useful for eyeballing what the index contains.
-    with (settings.data_dir / f"chunks_{args.chunk_size}.jsonl").open("w") as f:
-        for c in all_chunks:
+    suffix = "" if args.split == "app" else f"_{args.split}"
+    with (settings.data_dir / f"chunks_{args.chunk_size}{suffix}.jsonl").open("w") as f:
+        for c in chunks:
             f.write(json.dumps(asdict(c)) + "\n")
 
 

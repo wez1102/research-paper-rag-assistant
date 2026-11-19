@@ -1,11 +1,15 @@
 .env
 .venv/
 venv/
+.git/
 data/chroma/
 data/chunks_*.jsonl
+data/cache/
+data_orig/
+results_orig/
+assets/
 *.tar
 __pycache__/
 .pytest_cache/
-.git/
-data/cache/
 .relay/
+eval_relay/

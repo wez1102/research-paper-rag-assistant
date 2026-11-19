@@ -1,0 +1,87 @@
+# Offline checks: nothing here needs an LLM, an API key or a GPU.
+#   unit        - lint + every test that runs without the index (fake retriever,
+#                 fake Ollama server, temp Chroma dirs). ~1 min.
+#   retrieval   - downloads the dataset file and the two small models (cached),
+#                 builds the app index, and fails if retrieval quality drops below
+#                 the recorded baseline (tests/test_retrieval_regression.py).
+#   docker      - builds the image and checks /healthz and /readyz come up.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install (CPU-only torch)
+        run: |
+          pip install torch==2.9.1 --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-dev.txt
+      - name: Lint
+        run: ruff check .
+      - name: Tests that need no index or models
+        run: pytest -q tests/test_smoke.py tests/test_server.py tests/test_reliability.py tests/test_ingest.py tests/test_answer_eval.py
+
+  retrieval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    needs: unit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install (CPU-only torch)
+        run: |
+          pip install torch==2.9.1 --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements-dev.txt
+      - name: Cache models and dataset
+        uses: actions/cache@v4
+        with:
+          path: assets
+          key: assets-v1-bge-small-en-v1.5-ms-marco-MiniLM-L-6-v2
+      - name: Download assets (skipped when cached)
+        run: test -d assets/models || python scripts/download_assets.py assets
+      - name: Build the app index and run the retrieval regression tests
+        env:
+          QASPER_PARQUET: assets/qasper/validation.parquet
+          EMBED_MODEL: assets/models/bge-small-en-v1.5
+          RERANK_MODEL: assets/models/ms-marco-MiniLM-L-6-v2
+          HF_HUB_OFFLINE: "1"
+        run: |
+          python ingest.py
+          python ingest.py | tee second_run.log      # must be a no-op
+          grep -q "already up to date" second_run.log
+          pytest -q tests/test_retrieval_regression.py tests/test_smoke.py tests/test_app.py
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    needs: unit
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: docker build -t paper-rag:ci .
+      - name: Start and wait for readiness
+        run: |
+          docker run -d --name rag -p 7860:7860 -e LLM_PROVIDER=extractive paper-rag:ci
+          for i in $(seq 1 60); do
+            curl -fsS localhost:7860/readyz && exit 0
+            sleep 3
+          done
+          docker logs rag
+          exit 1

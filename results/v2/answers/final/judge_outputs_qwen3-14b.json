@@ -1,0 +1,387 @@
+{
+ "final-ans00#claim0": {
+  "content": "SUPPORTED | \"semi-manual evaluation score (Pyramid) in TAC 2014 scientific summarization dataset\" directly implies the claim.",
+  "sha1": "4d863ded6348543f08ca8f0f66e6c3ec38929791",
+  "total_s": 7.3
+ },
+ "final-ans00#claim1": {
+  "content": "SUPPORTED | The passage directly describes the pyramid framework and tiers representing importance of content units.",
+  "sha1": "7162664654ee72e0f111734ffc2b56c152f2dfd6",
+  "total_s": 6.37
+ },
+ "final-ans00#correct": {
+  "content": "PARTIAL | | The system answer correctly mentions the pyramid framework but adds extra details not in the reference.",
+  "sha1": "2ea08099b89f97075a53f194fce48dabf16ee009",
+  "total_s": 12.03
+ },
+ "final-ans01#claim0": {
+  "content": "SUPPORTED | \"We implement reinforcement learning and elaborately design two rewards to describe the irony accuracy and sentiment preservation, respectively.\"",
+  "sha1": "86ebea0eda84d4b64c28e25eb8f7691971dc9dcf",
+  "total_s": 6.54
+ },
+ "final-ans01#correct": {
+  "content": "CORRECT | The system answer correctly identifies the two components mentioned in the reference answers.",
+  "sha1": "9ccc32fd76c0b9b9cca5a872b0ab4754dcfe9a87",
+  "total_s": 2.9
+ },
+ "final-ans02#claim0": {
+  "content": "SUPPORTED | The passage states they compare word importance (using Attribution method) with human-annotated under-translated words.",
+  "sha1": "56d1fa4526568568575fed36f9898cdf42807c75",
+  "total_s": 6.79
+ },
+ "final-ans02#claim1": {
+  "content": "SUPPORTED | \"Under-translated input words should contribute little to the NMT outputs, yielding much smaller word importance.\"",
+  "sha1": "19afa44bc6c77ed514693af2b40ff34e2ea091b3",
+  "total_s": 3.24
+ },
+ "final-ans02#correct": {
+  "content": "PARTIAL | Combines both methods but doesn't clearly state human annotation as a reference.",
+  "sha1": "3324c0b1dc54b9e3d0ad69379dd1e1881ac192fd",
+  "total_s": 3.8
+ },
+ "final-ans03#claim1": {
+  "content": "SUPPORTED | The passage discusses both co-occurrence bias and causal occupation bias evaluation methods.",
+  "sha1": "521480a4324cd71dc3f3c68b79d3246c1c92e87e",
+  "total_s": 11.16
+ },
+ "final-ans03#correct": {
+  "content": "INCORRECT | The reference answer mentions gendered word pairs like he and she, not gender-neutral words.",
+  "sha1": "753ae495320f18a3eb7cfff06c4d360d8cb4faff",
+  "total_s": 3.56
+ },
+ "final-ans04#claim1": {
+  "content": "SUPPORTED | The passage directly states all elements of the claim.",
+  "sha1": "018f493ec9faf0cd0b42d2106ffe762252df42f1",
+  "total_s": 4.42
+ },
+ "final-ans04#correct": {
+  "content": "PARTIAL | | The system answer adds details not in the reference, but the core source (Stanford Sentiment Analysis Dataset) is correct.",
+  "sha1": "2aa9803a0f2885b3a57f713aed840fff15b9486b",
+  "total_s": 5.49
+ },
+ "final-ans05#claim0": {
+  "content": "UNSUPPORTED | The passage mentions FCE and CoNLL 2014 as evaluation datasets, not as the annotated corpus.",
+  "sha1": "6663802ba2207c47ad08a03f8002563e4a2c6ac5",
+  "total_s": 6.1
+ },
+ "final-ans05#correct": {
+  "content": "PARTIAL | The system answer mentions FCE and CoNLL 2014 but omits the two alternative annotations.",
+  "sha1": "8ce0c1d89f8aa50c638446cbd8e0cab414ae5888",
+  "total_s": 4.59
+ },
+ "final-ans06#claim0": {
+  "content": "SUPPORTED | \"At the end of the annotation process, we have annotated 700 tweets\" directly states the claim.",
+  "sha1": "b68f7a3c9c459b2943f958cee5214465c66d9c46",
+  "total_s": 7.28
+ },
+ "final-ans06#correct": {
+  "content": "CORRECT | The system answer matches the reference answer of 700 tweets.",
+  "sha1": "3caa0702101a1e2772aee53e1b9d8e7bf25bb5d1",
+  "total_s": 3.54
+ },
+ "final-ans07#claim0": {
+  "content": "SUPPORTED | The passage directly mentions InferSent, Universal Sentence Encoder, and averaging GloVe embeddings as evaluated methods.",
+  "sha1": "03fc94021358380da581f0d5757dbf3108f09bcf",
+  "total_s": 14.43
+ },
+ "final-ans07#correct": {
+  "content": "PARTIAL | | The system answer is missing some methods mentioned in the reference answers.",
+  "sha1": "18463bc7f642b1e1921f49de7b2db30eed6b2ff7",
+  "total_s": 3.34
+ },
+ "final-ans08#claim1": {
+  "content": "SUPPORTED | \"Regression Objective Function. The cosine-similarity between the two sentence embeddings $u$ and $v$ is computed [...] We use mean-squared-error lo",
+  "sha1": "9475cf1160f454fe18d16e377b3513f64e8f8c6b",
+  "total_s": 8.37
+ },
+ "final-ans08#claim2": {
+  "content": "SUPPORTED | The passage directly states the claim about concatenation and cross-entropy loss.",
+  "sha1": "24c420ae2210b06ae8568b6fe2e82a06b6b84d5d",
+  "total_s": 2.8
+ },
+ "final-ans08#claim3": {
+  "content": "SUPPORTED | \"For the regression objective function, we train on the training set of the STS benchmark dataset.\"",
+  "sha1": "08752cbaa2265499782beb0cbb46b31cc4b3eaf6",
+  "total_s": 6.72
+ },
+ "final-ans08#correct": {
+  "content": "CORRECT | The answer aligns with the reference answer, mentioning the objective functions used for training Siamese networks.",
+  "sha1": "ad7e1bdef02befd957d0df386843d40ac7b50a03",
+  "total_s": 4.83
+ },
+ "final-ans10#claim0": {
+  "content": "SUPPORTED | \"Perplexity\" and \"an array of metrics\" are explicitly mentioned in the passage.",
+  "sha1": "3bbc663b45fa81d709daabef7f8c94302f5697a8",
+  "total_s": 3.61
+ },
+ "final-ans10#claim1": {
+  "content": "SUPPORTED | The passage explicitly mentions co-occurrence bias and causal occupation bias.",
+  "sha1": "af8e9c25d84960f2e38bc9685065158a8c270dda",
+  "total_s": 6.55
+ },
+ "final-ans10#correct": {
+  "content": "PARTIAL | | System answer mentions causal occupation bias (correct) but misses other metrics like gender bias and normalized INLINEFORM0.",
+  "sha1": "27ed270dbf48466648defb2b6187bfc372f9a201",
+  "total_s": 4.38
+ },
+ "final-ans11#claim0": {
+  "content": "SUPPORTED | \"The resulting dataset consists of 22,880 users\" is explicitly stated in the passage.",
+  "sha1": "9a897d7fcf3963f03a96057949778616880297b4",
+  "total_s": 7.55
+ },
+ "final-ans11#correct": {
+  "content": "CORRECT | The system answer matches one of the correct reference answers.",
+  "sha1": "8006629615e6ee30837fa8cb7e31b2c94790e549",
+  "total_s": 2.75
+ },
+ "final-ans12#claim0": {
+  "content": "SUPPORTED | The passage directly states that AEM outperforms LEM, DPEMM, and K-means.",
+  "sha1": "bf400c5c1691745d6bf617f1d7847bf1c6a3b462",
+  "total_s": 7.76
+ },
+ "final-ans12#correct": {
+  "content": "CORRECT | The system answer lists the same baseline approaches as the reference answers.",
+  "sha1": "6b1359e4857fdbc30e95decbfe5b7c4087fb12f1",
+  "total_s": 3.22
+ },
+ "final-ans13#claim0": {
+  "content": "SUPPORTED | \"aggregate its contribution values to all output words by the sum operation, and then normalize all sums through the Softmax function\" directly stat",
+  "sha1": "56e5cf69670564652b63554af7c23d3c0f7e87d6",
+  "total_s": 8.18
+ },
+ "final-ans13#correct": {
+  "content": "INCORRECT | The reference answers mention gradients and contribution matrices, not aggregation via sum and softmax.",
+  "sha1": "98054437915731a6bee4e523cb5b8c549282969c",
+  "total_s": 3.85
+ },
+ "final-ans14#claim0": {
+  "content": "SUPPORTED | \"LastStateRNN is the classic RNN model\" directly identifies it as the baseline.",
+  "sha1": "b9c13cfe268899a2aa0aaf99a6ed3e7c11e602e1",
+  "total_s": 6.94
+ },
+ "final-ans14#correct": {
+  "content": "INCORRECT | The system answer is incomplete; the correct answer includes LastStateRNN, AvgRNN, and AttentionRNN.",
+  "sha1": "ffb1f6b5ac3bbaa66bc97e56ac04669a2f9e9fb9",
+  "total_s": 3.98
+ },
+ "final-ans15#claim1": {
+  "content": "SUPPORTED | \"Rouge-1 and Rouge-L (with INLINEFORM0 =0.454)\" and \"highest overall INLINEFORM1 is obtained by Rouge-3\" directly support the claim.",
+  "sha1": "b5c508a487e8de0eb2c9992da5a3c097af18df81",
+  "total_s": 7.9
+ },
+ "final-ans15#claim2": {
+  "content": "SUPPORTED | \"Rouge-S and its combination with unigrams (Rouge-SU) also show sub-optimal correlations.\"",
+  "sha1": "03d6cf2be64d52779c0fda3e9db830529aeaa265",
+  "total_s": 3.72
+ },
+ "final-ans15#claim3": {
+  "content": "SUPPORTED | \"Rouge-2 and Rouge-3 are better correlated with manual judgments in the context of scientific summarization\" is directly stated in the passage.",
+  "sha1": "969a14f168d29024733de715a440f3a6019a0dc4",
+  "total_s": 7.12
+ },
+ "final-ans15#correct": {
+  "content": "PARTIAL | | The system answer includes correct info but adds details not in the reference, like specific F-score values and scientific summarization context.",
+  "sha1": "14e7770ecfc48cc00e5cc7de3c559504a83b0d45",
+  "total_s": 5.21
+ },
+ "final-ans16#claim0": {
+  "content": "UNSUPPORTED | The passage does not mention any results or data related to English or other languages.",
+  "sha1": "9f8c1eee1825d3c4299b89788fcc8933b9260048",
+  "total_s": 6.09
+ },
+ "final-ans16#correct": {
+  "content": "INCORRECT | The system answer contradicts the reference answers, which both state \"Yes.\"",
+  "sha1": "e3f31568a2101991712bfb6f88f9b4b59a73daec",
+  "total_s": 2.9
+ },
+ "final-ans17#claim0": {
+  "content": "SUPPORTED | \"The passage explicitly lists the four classifiers mentioned in the claim.\"",
+  "sha1": "f81bd0dfe54dfe3ef2c593478a578ab14e94290d",
+  "total_s": 4.32
+ },
+ "final-ans17#correct": {
+  "content": "CORRECT | The system answer lists all the classifiers mentioned in the reference answers.",
+  "sha1": "36dff85f55901ff231a08e03250deb0550b31065",
+  "total_s": 3.18
+ },
+ "final-ans18#claim0": {
+  "content": "UNSUPPORTED | | The passage does not mention the language of the tweets.",
+  "sha1": "865975bdb033504d382c96d0689d33b3a21aec40",
+  "total_s": 4.32
+ },
+ "final-ans18#correct": {
+  "content": "CORRECT | The system answer correctly identifies English as the language in the dataset.",
+  "sha1": "5e706498df2549d6c3e5ae1e1ce07ac77ef6c09c",
+  "total_s": 3.16
+ },
+ "final-ans19#claim0": {
+  "content": "SUPPORTED | The passage directly mentions the use of animal names like dog, donkey, and beast as insults.",
+  "sha1": "55e974dc345c1fe8aeac22e67122a03cfcbd308d",
+  "total_s": 7.39
+ },
+ "final-ans19#claim1": {
+  "content": "SUPPORTED | \"Religious hate speech appeared in only 15% of all hate speech tweets\" is directly stated in the passage.",
+  "sha1": "3ce7f26a18aebd8c15c10c7ea49c536003aca4c7",
+  "total_s": 3.78
+ },
+ "final-ans19#correct": {
+  "content": "PARTIAL | | The system answer mentions direct name calling with animal names, which aligns with the reference, but misses other key characteristics like simile,",
+  "sha1": "ec269716816469e9edd6c12588f92d3a455a337a",
+  "total_s": 6.12
+ },
+ "final-ans20#claim0": {
+  "content": "SUPPORTED | The passage directly states the claim about words indicating sports and sentiment categories.",
+  "sha1": "f2b20d765cc63ff222fe4b364bae6aa41c4f27f3",
+  "total_s": 6.21
+ },
+ "final-ans20#claim1": {
+  "content": "SUPPORTED | The passage directly states the example of \"amazing, exciting\" as labeled features for the positive class.",
+  "sha1": "ff0edbc68d66517f9fe2758c7db32dc903bf36de",
+  "total_s": 3.94
+ },
+ "final-ans20#correct": {
+  "content": "PARTIAL | | The answer mentions labeled features but adds extra details not in the reference.",
+  "sha1": "5e50e8fef9ce7fe9b2db519830255b1e3d8acbf6",
+  "total_s": 3.69
+ },
+ "final-ans21#claim1": {
+  "content": "SUPPORTED | The passage discusses classifying users based on their industry and occupational context.",
+  "sha1": "15b8122da47c85b5505e0752659ab960171d257e",
+  "total_s": 6.77
+ },
+ "final-ans21#correct": {
+  "content": "CORRECT | The system answer aligns with the reference answer about industry being the aggregate of enterprises in a particular field.",
+  "sha1": "e86fa40d7eb9345dea475aa0614bc9db7bc6ae20",
+  "total_s": 3.91
+ },
+ "final-ans22#claim0": {
+  "content": "SUPPORTED | \"applied LDA algorithm and Gibbs sampling on ISWC and WWW conference's publications from 2013-2017\" directly matches the claim.",
+  "sha1": "8e9d325988bb8eb55f02d9be22c67b7f1f2b2c4e",
+  "total_s": 5.92
+ },
+ "final-ans22#claim1": {
+  "content": "SUPPORTED | \"They extracted abstracts and titles\" and \"used MALLET to implement the inference and obtain the topic models\" are both explicitly stated in the pas",
+  "sha1": "5bed131f6defa73707e1148a7136fa2b1c4daea5",
+  "total_s": 5.7
+ },
+ "final-ans22#correct": {
+  "content": "PARTIAL | Missing mention of using Gibbs sampling for parameter estimation and evaluating topics.",
+  "sha1": "4d22b7bb3624d5afbad307793e7bd9ef9dc1f45c",
+  "total_s": 4.33
+ },
+ "final-ans23#claim0": {
+  "content": "SUPPORTED | The passage states that shallow syntax offers little to no benefit to ELMo models in sentiment classification.",
+  "sha1": "a34d6acb541da22b39974873fdbd480bda340fa8",
+  "total_s": 5.52
+ },
+ "final-ans23#claim1": {
+  "content": "SUPPORTED | \"chunk features are slightly harmful on average... mSynC again performs similarly to ELMo-transformer\" directly states the claim.",
+  "sha1": "4306efe092b3fa369e9f554c7e88fa0c321261eb",
+  "total_s": 3.82
+ },
+ "final-mul00#claim1": {
+  "content": "SUPPORTED | The passage states the dataset contains 10,000 tweets and 1,915 offensive tweets.",
+  "sha1": "36d3c7cbba515460b1cd352dd3ec5ec3c41c0adb",
+  "total_s": 9.6
+ },
+ "final-mul00#correct": {
+  "content": "PARTIAL | Correctly mentions Arabic and 10,000 tweets but omits English and 14,100 tweets from OLID.",
+  "sha1": "1be92c7d7ae68ec0b81b895456a0e6191f71a360",
+  "total_s": 5.11
+ },
+ "final-mul01#claim0": {
+  "content": "SUPPORTED | \"The paper computes ELMo embeddings for seven languages on much larger corpora, improving quality compared to previous models.\"",
+  "sha1": "7083ad384fa2b343d8af344fd3e3cbcf6ae3f680",
+  "total_s": 6.92
+ },
+ "final-mul01#claim1": {
+  "content": "SUPPORTED | \"high-quality models for contextual embeddings, called ELMo... precomputed for seven... languages\" directly supports the claim.",
+  "sha1": "753cffffeb9f2632eb77b4811ac199c51d16042f",
+  "total_s": 7.31
+ },
+ "final-mul01#correct": {
+  "content": "PARTIAL | | The system answer repeats the same point twice and misses the second paper (\"Shallow Syntax in Deep Water\").",
+  "sha1": "e8e091fcdd8d4f06faa7dc9738de98c9c15b9688",
+  "total_s": 5.31
+ },
+ "final-mul02#claim0": {
+  "content": "SUPPORTED | The passage explicitly mentions that the dataset is for the Turkish language.",
+  "sha1": "7647f9a3ffe14ab66b5bded10cda14cafa5de004",
+  "total_s": 9.14
+ },
+ "final-mul02#correct": {
+  "content": "PARTIAL | The system answer is correct for one dataset but misses Chinese and English languages from UTCNN.",
+  "sha1": "c43fffaf2acbff8aca57d97d9fa1d85180e415ec",
+  "total_s": 3.41
+ },
+ "final-mul03#claim1": {
+  "content": "UNSUPPORTED | The passage does not mention news articles or explicitly state the language coverage.",
+  "sha1": "43fcfd553ad3f2297a8f49de554de6046b7b7ff8",
+  "total_s": 4.56
+ },
+ "final-mul03#claim2": {
+  "content": "SUPPORTED | \"The dataset contains the sentences collected from daily newspaper of the year 2015-2016.\"",
+  "sha1": "d2becdc77572e6530ebb266488f47fe0d500073b",
+  "total_s": 7.25
+ },
+ "final-mul03#correct": {
+  "content": "INCORRECT | The system answer mentions incorrect dataset names and omits the medical case report dataset.",
+  "sha1": "2a3a8f47ca2116eb193090b4223962b8cf6fcb52",
+  "total_s": 4.28
+ },
+ "final-una00#claim1": {
+  "content": "SUPPORTED | The passage states that cloze-style questions are constructed from document structure and can be transformed into naturally-looking questions.",
+  "sha1": "b581ceeb8106eec553a9e79f366b9619a83ded1d",
+  "total_s": 8.64
+ },
+ "final-una03#claim0": {
+  "content": "UNSUPPORTED | The passage does not specify the number of LSTM layers in the model.",
+  "sha1": "69b2a4ac2524b5d6d181e0ed4f5fb580e39e2860",
+  "total_s": 5.04
+ },
+ "final-una04#claim0": {
+  "content": "SUPPORTED | The passage directly states that their method out-performs BIBREF0's and achieves best ROGUE-1 scores with the specified model.",
+  "sha1": "c0be3dc509839897b717eaf307099e24f558bb21",
+  "total_s": 5.22
+ },
+ "final-una06#claim0": {
+  "content": "SUPPORTED | \"The 2017 dataset, for example, contains 14 languages over 6 language groups\" directly states the claim.",
+  "sha1": "cb2e2ab604f404e5479c9c6abcaf2710130a4728",
+  "total_s": 7.75
+ },
+ "final-una07#claim0": {
+  "content": "UNSUPPORTED | The passage does not address linguistic similarity or model errors in that context.",
+  "sha1": "f301db37e9022d46cddb254461a47a7d07acc32a",
+  "total_s": 5.38
+ },
+ "final-una07#claim2": {
+  "content": "SUPPORTED | The passage directly states the model could be learning topic associations instead.",
+  "sha1": "d31eee338766604b6277d612bdfe05e5552e0a03",
+  "total_s": 2.41
+ },
+ "final-una08#claim1": {
+  "content": "SUPPORTED | The passage directly states that text descriptions may represent an entity from various aspects and relations focus on fractional aspects.",
+  "sha1": "347719b0984f4387ea0d107f801cca5619496b85",
+  "total_s": 6.53
+ },
+ "final-una08#claim2": {
+  "content": "SUPPORTED | \"Attention mechanism is introduced to utilize an attention-based encoder that constructs contextual text encodings according to different relations.",
+  "sha1": "07517984891cf91455182f622c4cf6979d981c8e",
+  "total_s": 6.22
+ },
+ "final-una09#claim1": {
+  "content": "PARTIAL | The passage states 74.1% accuracy but does not mention the baseline VAE performance of 72.2%.",
+  "sha1": "8fe38ae19a3926bd0072a1927e648b637e77e836",
+  "total_s": 5.97
+ },
+ "final-una09#claim2": {
+  "content": "SUPPORTED | \"CJFA encoder performs better... absolute accuracy improvement of 7.9% for speaker recognition Task b is observed.\"",
+  "sha1": "ab9b1954c2c002c8633ad3004cb8191eb0fc71d1",
+  "total_s": 7.53
+ },
+ "final-una09#claim3": {
+  "content": "PARTIAL | The passage supports CJFA outperforming VAE and CJFS in phone classification but not all tasks.",
+  "sha1": "79d701f6061288ffb15eb77ab87ed463018d0d0d",
+  "total_s": 5.45
+ }
+}
