@@ -64,7 +64,7 @@ jobs:
           HF_HUB_OFFLINE: "1"
         run: |
           python ingest.py
-          python ingest.py | tee second_run.log      # must be a no-op
+          python ingest.py 2>&1 | tee second_run.log   # must be a no-op (logs go to stderr)
           grep -q "already up to date" second_run.log
           pytest -q tests/test_retrieval_regression.py tests/test_smoke.py tests/test_app.py
 
