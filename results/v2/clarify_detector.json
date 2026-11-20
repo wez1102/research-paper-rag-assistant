@@ -1,0 +1,24 @@
+{
+ "dev": {
+  "n": 109,
+  "agree_with_labels": 0.853,
+  "generic_caught": "68/77",
+  "specific_wrongly_asked": "7/32",
+  "asked_which_paper": 75,
+  "right_paper_in_3_suggestions": "39/75",
+  "hit5_on_questions_answered_directly": 0.647,
+  "n_answered_directly": 34,
+  "hit5_all_corpus": 0.505
+ },
+ "final": {
+  "n": 209,
+  "agree_with_labels": 0.823,
+  "generic_caught": "108/119",
+  "specific_wrongly_asked": "26/90",
+  "asked_which_paper": 134,
+  "right_paper_in_3_suggestions": "54/134",
+  "hit5_on_questions_answered_directly": 0.707,
+  "n_answered_directly": 75,
+  "hit5_all_corpus": 0.45
+ }
+}

@@ -1,0 +1,335 @@
+{
+ "final-ans00": {
+  "content": "The manual Pyramid scores are used as semi-manual evaluation scores in the TAC 2014 scientific summarization dataset [4]. These scores are based on the pyramid framework, where content units (nuggets) are organized in tiers representing their importance [2].",
+  "sha1": "3d52b90ac3fb486da991c7e9bade20e19d13a56e",
+  "ttft_s": 11.536,
+  "total_s": 14.672,
+  "eval_count": 56,
+  "prompt_eval_count": 1665,
+  "load_duration_s": 3.313
+ },
+ "final-ans01": {
+  "content": "The combination of rewards for reinforcement learning includes the irony reward and the sentiment preservation reward [2].",
+  "sha1": "5b4ef45c562d702cf87801662ec38bea0323ad03",
+  "ttft_s": 7.367,
+  "total_s": 8.45,
+  "eval_count": 20,
+  "prompt_eval_count": 1666,
+  "load_duration_s": 0.003
+ },
+ "final-ans02": {
+  "content": "They measure under-translated words by comparing the importance of words calculated using the gradient-based method with human-annotated under-translated words [1]. The method identifies under-translated words as those with much smaller word importance [1].",
+  "sha1": "12a61354164627aede78ceaee0fe574c123e7fa8",
+  "ttft_s": 6.134,
+  "total_s": 8.831,
+  "eval_count": 48,
+  "prompt_eval_count": 1421,
+  "load_duration_s": 0.002
+ },
+ "final-ans03": {
+  "content": "The paper looks at gender-neutral occupations and gender-neutral words. These are used to evaluate co-occurrence bias and causal occupation bias [1][2].",
+  "sha1": "11ee78354771214b0666a7daf525c685afadcf5a",
+  "ttft_s": 8.938,
+  "total_s": 10.74,
+  "eval_count": 32,
+  "prompt_eval_count": 1951,
+  "load_duration_s": 0.002
+ },
+ "final-ans04": {
+  "content": "The dataset of hashtags is sourced from the Stanford Sentiment Analysis Dataset. Specifically, it includes 1,108 unique English hashtags from 1,268 randomly selected tweets along with their crowdsourced segmentations and additional corrections, and 12,594 unique English hashtags and their associated tweets [1].",
+  "sha1": "b75b7bdd042c635abc45b185e5d1cc97eb350bf6",
+  "ttft_s": 6.271,
+  "total_s": 9.664,
+  "eval_count": 67,
+  "prompt_eval_count": 1418,
+  "load_duration_s": 0.002
+ },
+ "final-ans05": {
+  "content": "The annotated corpus used was the FCE and CoNLL 2014 datasets [2].",
+  "sha1": "ead70da5a4bb550d1f8b02d4d9e91fde8147db8b",
+  "ttft_s": 6.877,
+  "total_s": 7.959,
+  "eval_count": 22,
+  "prompt_eval_count": 1581,
+  "load_duration_s": 0.002
+ },
+ "final-ans06": {
+  "content": "700 tweets [2].",
+  "sha1": "e3d92696d7e647be608ed3d1aa2cd50a792fb436",
+  "ttft_s": 8.339,
+  "total_s": 8.704,
+  "eval_count": 8,
+  "prompt_eval_count": 1861,
+  "load_duration_s": 0.002
+ },
+ "final-ans07": {
+  "content": "InferSent [4], Universal Sentence Encoder [5], and averaging GloVe embeddings [2] are the other sentence embeddings methods evaluated.",
+  "sha1": "3b5bb821da5415c066ecf2f223d3ee185f810e75",
+  "ttft_s": 10.37,
+  "total_s": 11.852,
+  "eval_count": 29,
+  "prompt_eval_count": 2261,
+  "load_duration_s": 0.001
+ },
+ "final-ans08": {
+  "content": "The siamese networks are trained using different objective functions, including the classification, regression, and triplet objective functions. For the regression objective function, cosine-similarity between the sentence embeddings is computed, and mean-squared-error loss is used as the objective function [3]. For the classification objective function, the element-wise difference $|u-v|$ is concatenated with the sentence embeddings $u$ and $v$, and cross-entropy loss is optimized [3]. The training data and objective function depend on the annotated dataset, with the regression objective function trained on the STS benchmark dataset [4].",
+  "sha1": "39de72437b67ef1aa80d7346cb13d5814b97388e",
+  "ttft_s": 6.661,
+  "total_s": 12.902,
+  "eval_count": 121,
+  "prompt_eval_count": 1546,
+  "load_duration_s": 0.003
+ },
+ "final-ans09": {
+  "content": "I can't find this in the papers.",
+  "sha1": "007281438c725004a26784ad018f21eb759f5681",
+  "ttft_s": 5.633,
+  "total_s": 6.099,
+  "eval_count": 10,
+  "prompt_eval_count": 1315,
+  "load_duration_s": 0.003
+ },
+ "final-ans10": {
+  "content": "Perplexity and an array of metrics to provide a holistic diagnosis of the model behavior under debiasing treatment [1]. These include co-occurrence bias and causal occupation bias [1][3].",
+  "sha1": "b86896802345ecedf8b70aa3992089e5f252f201",
+  "ttft_s": 6.566,
+  "total_s": 8.714,
+  "eval_count": 42,
+  "prompt_eval_count": 1930,
+  "load_duration_s": 0.002
+ },
+ "final-ans11": {
+  "content": "The dataset consists of 22,880 users [1].",
+  "sha1": "2553a1bed87ceedcd76d023d0a2e0031e854c8d7",
+  "ttft_s": 8.995,
+  "total_s": 9.784,
+  "eval_count": 16,
+  "prompt_eval_count": 2000,
+  "load_duration_s": 0.001
+ },
+ "final-ans12": {
+  "content": "The baseline approaches that the AEM out-perform are LEM, DPEMM, and K-means [3].",
+  "sha1": "f3f264dbe1a25b3f9db872e7d11138f0c8f1ed44",
+  "ttft_s": 7.438,
+  "total_s": 8.74,
+  "eval_count": 26,
+  "prompt_eval_count": 1668,
+  "load_duration_s": 0.001
+ },
+ "final-ans13": {
+  "content": "The models aggregate the contribution values of each input word to all output words using the sum operation and then normalize these sums through the Softmax function to determine the word importance [1].",
+  "sha1": "fcd7d350a598d39ea2467cf0fc6f0b43f18c1941",
+  "ttft_s": 7.858,
+  "total_s": 9.738,
+  "eval_count": 37,
+  "prompt_eval_count": 1767,
+  "load_duration_s": 0.001
+ },
+ "final-ans14": {
+  "content": "The baseline model used is LastStateRNN [2].",
+  "sha1": "f000f5720f2d0685b0a33a692aaf9ce8182fc512",
+  "ttft_s": 8.352,
+  "total_s": 8.98,
+  "eval_count": 13,
+  "prompt_eval_count": 1866,
+  "load_duration_s": 0.001
+ },
+ "final-ans15": {
+  "content": "Different variants of ROUGE scores result in different correlations with human pyramid scores. Specifically, Rouge-1 and Rouge-L have the lowest F-score correlations (0.454), while Rouge-3 has the highest overall correlation [1]. Rouge-W, Rouge-S, and Rouge-SU also show sub-optimal correlations [1]. Additionally, Rouge-2 and Rouge-3 are better correlated with manual judgments in the context of scientific summarization [3].",
+  "sha1": "7f724c63d5bc807590b0ebad3d599a524a70ab75",
+  "ttft_s": 7.394,
+  "total_s": 12.186,
+  "eval_count": 93,
+  "prompt_eval_count": 1684,
+  "load_duration_s": 0.001
+ },
+ "final-ans16": {
+  "content": "No [4].",
+  "sha1": "5ca698c32ace48629830c6f0926f6103065836c7",
+  "ttft_s": 9.655,
+  "total_s": 9.893,
+  "eval_count": 5,
+  "prompt_eval_count": 2056,
+  "load_duration_s": 0.002
+ },
+ "final-ans17": {
+  "content": "K Nearest Neighbors (KNN), Random Forest (RF), Support Vector Machine (SVM), and Multi-layer Perceptron (MLP) [2].",
+  "sha1": "9a79ab4f8793167fd309b2d761de7df6231d7602",
+  "ttft_s": 7.242,
+  "total_s": 9.197,
+  "eval_count": 35,
+  "prompt_eval_count": 1542,
+  "load_duration_s": 0.002
+ },
+ "final-ans18": {
+  "content": "The dataset includes English tweets. [1]",
+  "sha1": "4fb98c3f8ab267017941ea897fd39e20452ee9d9",
+  "ttft_s": 5.862,
+  "total_s": 6.371,
+  "eval_count": 10,
+  "prompt_eval_count": 1297,
+  "load_duration_s": 0.001
+ },
+ "final-ans19": {
+  "content": "The distinctive characteristics of how Arabic speakers use offensive language include direct name calling, where animal names like كلب> (“klb” – “dog”), حمار> (“HmAr” – “donkey”), and بهيم> (“bhym” – “beast”) are commonly used as insults [3]. Additionally, religious hate speech appeared in only 15% of all hate speech tweets [3].",
+  "sha1": "a4fdca825c75540d378545c4929efad6bfa9b121",
+  "ttft_s": 6.696,
+  "total_s": 11.157,
+  "eval_count": 85,
+  "prompt_eval_count": 1527,
+  "load_duration_s": 0.001
+ },
+ "final-ans20": {
+  "content": "Words such as NBA, player, and basketball are strong indicators of the sports category [1], and words like terrible, boring, and messing indicate a negative polarity while words like perfect, exciting, and moving suggest a positive polarity in sentiment classification [1]. Additionally, labeled features such as words like amazing, exciting can be labeled features for class positive in sentiment classification [4].",
+  "sha1": "6329a9bc9870c54db66ab8b2ef7995327def9d7b",
+  "ttft_s": 6.767,
+  "total_s": 10.829,
+  "eval_count": 76,
+  "prompt_eval_count": 1520,
+  "load_duration_s": 0.004
+ },
+ "final-ans21": {
+  "content": "A person's industry refers to the aggregate of enterprises in a particular field, which can be predicted by identifying industry indicative text in social media. This concept is used to classify users based on their professional or business context [3].",
+  "sha1": "f7af689607f3f6a159b590f3bca9c8bc5337667d",
+  "ttft_s": 9.227,
+  "total_s": 11.661,
+  "eval_count": 46,
+  "prompt_eval_count": 2024,
+  "load_duration_s": 0.003
+ },
+ "final-ans22": {
+  "content": "They utilized LDA and Gibbs sampling to evaluate ISWC and WWW publications by applying the LDA algorithm and Gibbs sampling on the conferences' publications from 2013-2017 [3]. They extracted abstracts and titles from each article and used MALLET to implement the inference and obtain the topic models [5].",
+  "sha1": "6dcfebffa6793ac54006b5c8ca6fefe8047f4e72",
+  "ttft_s": 4.114,
+  "total_s": 7.69,
+  "eval_count": 68,
+  "prompt_eval_count": 995,
+  "load_duration_s": 0.003
+ },
+ "final-ans23": {
+  "content": "No [1]. The results show that shallow syntactic features are slightly harmful on average for sentiment classification, and mSynC performs similarly to ELMo-transformer [1].",
+  "sha1": "05f04ec9e6e59f8a4b6e8d087fd10a96b92f4271",
+  "ttft_s": 4.569,
+  "total_s": 6.465,
+  "eval_count": 37,
+  "prompt_eval_count": 1102,
+  "load_duration_s": 0.002
+ },
+ "final-mul00": {
+  "content": "Arabic. The dataset contains 10,000 tweets [4], with 1,915 offensive tweets [2].",
+  "sha1": "72157cc53a03cee4d35c429cd63ab818359d0c80",
+  "ttft_s": 10.15,
+  "total_s": 11.772,
+  "eval_count": 30,
+  "prompt_eval_count": 2181,
+  "load_duration_s": 0.002
+ },
+ "final-mul01": {
+  "content": "The paper \"High Quality ELMo Embeddings for Seven Less-Resourced Languages\" [1] builds on ELMo by computing ELMo embeddings for seven less-resourced languages on much larger corpora, improving the quality of the embeddings compared to previously available models [1]. The paper \"High Quality ELMo Embeddings for Seven Less-Resourced Languages\" [3] also builds on ELMo by describing high-quality models for contextual embeddings called ELMo, precomputed for seven morphologically rich, less-resourced languages, enhancing the applicability of ELMo to these languages [3].",
+  "sha1": "1510a7611e05ae7fbd623bf00df21e64f1631d4f",
+  "ttft_s": 7.687,
+  "total_s": 14.511,
+  "eval_count": 126,
+  "prompt_eval_count": 1723,
+  "load_duration_s": 0.003
+ },
+ "final-mul02": {
+  "content": "Turkish [1][2][5].",
+  "sha1": "939c436d6c47ceb7f4061e63e7141e8da4d90374",
+  "ttft_s": 8.102,
+  "total_s": 8.589,
+  "eval_count": 10,
+  "prompt_eval_count": 1771,
+  "load_duration_s": 0.003
+ },
+ "final-mul03": {
+  "content": "The new named-entity datasets introduced in these papers are the ILPRL dataset and the OurNepali dataset. The ILPRL dataset covers the Nepali language and is based on news articles [3]. The OurNepali dataset also covers the Nepali language and is based on news articles from 2015-2016 [4].",
+  "sha1": "35c2011a287acf3b58c55e343b941269c8329be4",
+  "ttft_s": 7.231,
+  "total_s": 11.222,
+  "eval_count": 75,
+  "prompt_eval_count": 1627,
+  "load_duration_s": 0.004
+ },
+ "final-una00": {
+  "content": "Yes, it is possible to convert cloze-style questions to naturally-looking questions. The paper mentions that the cloze-style questions are constructed from the document structure and can be transformed into naturally-looking questions through the system's methodology [2][5].",
+  "sha1": "507c74fa0c3f3167cbb0ec510d9c44a206f66966",
+  "ttft_s": 8.002,
+  "total_s": 10.651,
+  "eval_count": 50,
+  "prompt_eval_count": 1786,
+  "load_duration_s": 0.003
+ },
+ "final-una01": {
+  "content": "I can't find this in the papers.",
+  "sha1": "cba33c90630c0d025c0f39b5a58d48d1a68f2762",
+  "ttft_s": 6.976,
+  "total_s": 7.455,
+  "eval_count": 10,
+  "prompt_eval_count": 1578,
+  "load_duration_s": 0.002
+ },
+ "final-una02": {
+  "content": "I can't find this in the papers.",
+  "sha1": "fa61623d1f4eacd55b0048169e5f6b035e47fd17",
+  "ttft_s": 6.342,
+  "total_s": 6.817,
+  "eval_count": 10,
+  "prompt_eval_count": 1441,
+  "load_duration_s": 0.001
+ },
+ "final-una03": {
+  "content": "The model has one LSTM layer. [3]",
+  "sha1": "d1e074ce6b83f783d1b5ce134981cc06cf651d09",
+  "ttft_s": 7.435,
+  "total_s": 7.988,
+  "eval_count": 11,
+  "prompt_eval_count": 1662,
+  "load_duration_s": 0.002
+ },
+ "final-una04": {
+  "content": "Their method out-performs BIBREF0's method with best ROGUE-1 INLINEFORM0 scores using the first co-occurrence+first model for important sentences [2].",
+  "sha1": "2de55227d9419e7ea3dfbfe48e67a112998b36f1",
+  "ttft_s": 8.274,
+  "total_s": 10.339,
+  "eval_count": 39,
+  "prompt_eval_count": 1786,
+  "load_duration_s": 0.002
+ },
+ "final-una06": {
+  "content": "The DSL datasets represent 14 languages over 6 language groups [1].",
+  "sha1": "eeeeef5924fe0af47fd415a9d104a4b98523c503",
+  "ttft_s": 8.522,
+  "total_s": 9.406,
+  "eval_count": 17,
+  "prompt_eval_count": 1852,
+  "load_duration_s": 0.001
+ },
+ "final-una07": {
+  "content": "No [4]. The errors of the model are attributed to topic bias rather than linguistic similarity between different L1s. The model could be learning topic associations instead of language-specific features [4].",
+  "sha1": "494974e83e94bfd84a38e0abc20bb2c9de11ecbc",
+  "ttft_s": 8.035,
+  "total_s": 10.127,
+  "eval_count": 40,
+  "prompt_eval_count": 1762,
+  "load_duration_s": 0.002
+ },
+ "final-una08": {
+  "content": "The size of textual descriptions is not explicitly mentioned in the papers. However, it is noted that text descriptions may present an entity from various aspects, and different relations focus on fractional aspects of the description [3]. Additionally, the attention mechanism is introduced to select the most related information from text descriptions under different contexts [4].",
+  "sha1": "d8893bab6903477ca6e261a447b9d0ad8f92843c",
+  "ttft_s": 7.356,
+  "total_s": 10.82,
+  "eval_count": 65,
+  "prompt_eval_count": 1656,
+  "load_duration_s": 0.003
+ },
+ "final-una09": {
+  "content": "The proposed approaches outperform the state-of-the-art results on these tasks. For phone classification, one of the proposed approaches achieves a classification accuracy of 74.1%, which is higher than the baseline VAE performance of 72.2% [1]. For speaker recognition, the CJFA encoder shows significant improvements, with an absolute accuracy improvement of 7.9% for Task b [2]. The CJFA encoder performs better than the VAE baseline and CJFS encoder on all tasks [3].",
+  "sha1": "cb55ea05980192302d3f5bf95c4be824b8c3d101",
+  "ttft_s": 8.688,
+  "total_s": 14.352,
+  "eval_count": 105,
+  "prompt_eval_count": 1911,
+  "load_duration_s": 0.004
+ }
+}

@@ -10,14 +10,13 @@ numpy==2.2.6
 pandas==2.3.3
 pyarrow==25.0.1
 streamlit==1.65.0
-# web app (server.py)
+# web app (server.py); httpx is also the Ollama client in generate.py
 fastapi==0.161.1
 uvicorn==0.54.0
+httpx==0.28.1
 python-dotenv==1.2.4
 tqdm==4.70.1
 # LLM clients - only the one you use actually matters
 openai==3.36.1
 anthropic==2.1.0
-# tests
-pytest==9.1.1
-httpx==0.28.1        # FastAPI's TestClient
+# Test/lint tools live in requirements-dev.txt so the container stays smaller.

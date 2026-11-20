@@ -19,3 +19,8 @@ data/cache/
 
 # scratch files from the Ollama answer runs
 .relay/
+
+# round 2: local model/data copies, lint cache, scratch for the browser relay
+assets/
+.ruff_cache/
+eval_relay/

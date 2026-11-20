@@ -18,7 +18,9 @@ BM25 + dense retrieval with reciprocal rank fusion, a cross-encoder reranker, an
 evaluation harness that measures retrieval quality on 144 human-labelled questions
 from the [QASPER](https://huggingface.co/datasets/allenai/qasper) dataset.
 
-**Run it yourself:** `uvicorn server:app` after `python ingest.py` (see [Run it locally](#run-it-locally)). There's no hosted demo yet: see [Deploy](#deploy-to-hugging-face-spaces).
+**Round 2 (Nov 2026)** re-checked everything on papers the system had never seen, measured whether citations actually support the answers, and hardened the service. See [Round 2](#round-2-nov-2026-what-changed-and-what-was-measured) for the before/after table, and [docs/EVALUATION.md](docs/EVALUATION.md) for the details.
+
+**Run it yourself:** `uvicorn server:app` after `python ingest.py` (see [Run it locally](#run-it-locally)). There's no hosted demo yet: see [Deploy](#deploy).
 
 ![The web app: an answer with footnote citations, and the cited passage in the margin with its best supporting sentence highlighted](docs/screenshot.png)
 
@@ -30,6 +32,8 @@ from the [QASPER](https://huggingface.co/datasets/allenai/qasper) dataset.
 - **Streaming.** The passages appear in the margin as soon as retrieval finishes (about 2 s). Then the answer streams in token by token over Server-Sent Events.
 - **Citations you can check.** `[n]` markers become footnote numbers. Hovering one lights up its passage in the margin, and the sentence in that passage that best supports the answer gets highlighted. Uncited passages fold away. "Copy with citations" copies the answer in the `[paper title, section]` format.
 - **Honest refusals.** When it declines, it says why: nothing relevant was found (and no model was asked), the model found no answer in the passages, or the answer came without any source.
+- **"Which paper?"** A question like "What was the baseline?" asked across all papers usually has no single answer, so instead of answering from whichever paper ranks first, the app offers the most likely papers as buttons and re-asks with the one you pick.
+- **Operable.** `/healthz` and `/readyz` (index, reranker and LLM checked separately), an `X-Request-ID` on every response and in every streamed event, one JSON log line per question with per-stage timings, optional API-key auth (`API_KEYS`), bounded concurrent generations, and timeouts on every LLM call.
 - **Search controls.** Dense / hybrid / hybrid + rerank, a single-paper filter, the number of passages, and a "How well does it work?" panel that reads the numbers straight from `results/`.
 - **Light and dark** themes follow the system, the layout works down to phone width (sources fold under each answer), keyboard focus is visible, and reduced motion is respected. The fonts (Source Serif 4, Schibsted Grotesk) are self-hosted, so the page makes no third-party requests.
 
@@ -37,7 +41,57 @@ The answer path is `generate.answer_events()`. It uses the same retrieval, refus
 
 <img src="docs/screenshot-mobile.png" alt="The same app on a phone in dark mode" width="300">
 
-## Results
+## Round 2 (Nov 2026): what changed and what was measured
+
+**Main weaknesses found**
+
+1. **No clean held-out set.** Round 1's test papers (the ones the app serves) had also been used to pick the chunk size and to compare answer prompts.
+2. **"100% citation accuracy" only checked that `[n]` pointed at a retrieved passage.** It said nothing about whether the passage supports the sentence.
+3. **Corpus-wide retrieval was weak, and nobody knew why.** It turned out most misses are generic questions ("What baselines do they use?") that don't identify a paper at all, not retrieval errors.
+4. **Results drifted between identical runs.** Chroma's approximate dense search returned different top-50 lists from one process to the next for 59 of 109 dev questions.
+5. **Fragile service.** A missing index crashed start-up. The Ollama call had one 120 s timeout and no handling of malformed or cut-off streams. There was no readiness check, no request tracing, and nothing stopped an abandoned request from generating to the end.
+6. **No CI, no ingestion consistency checks, no deployment path beyond a paid Hugging Face Space.**
+
+**Before and after.** Round-1 numbers are as documented in Oct 2026 (app papers). Round-2 retrieval numbers are on the **final** split (validation papers 100-149: 209 questions, opened once after every choice was frozen on the dev split) unless marked "app".
+
+| Area | Round 1 | Round 2 | Status |
+|---|---|---|---|
+| Evaluation protocol | test = app papers, also used for some choices | dev papers 50-99 for every decision; final papers 100-149 opened once | done |
+| Paper-scope Hit@5 / MRR (hybrid + rerank) | 84.7% / 0.564 (app) | **85.2% / 0.593** (final); 84.7% / 0.565 (app) | measured |
+| Corpus-wide Hit@5 / MRR | 47.9% / 0.304 (app) | **45.0% / 0.305** (final); 48.6% / 0.304 (app) | measured |
+| Corpus-wide Hit@5 on questions answered directly (generic ones get "which paper?") | - | **70.7%** (final, 75 of 209 questions) | measured |
+| Retrieval latency, p50 / p95 | 2.1 s / - (paper), 2.6 s / - (corpus); 4-core ARM | **1.11 / 1.92 s** (paper), **1.82 / 2.46 s** (corpus); 2-core x86. Round-1 scoring on the same machine: 2.55 / 3.63 s, 3.61 / 4.33 s | measured |
+| Repeatability | dense results differed between processes for 59/109 dev questions | 0/109 | measured |
+| Citations | "100% citation accuracy" (valid markers) | **80.4%** of cited claims supported by their passages (manual review, final); valid markers still 100% | measured |
+| Answer correctness (qwen3:8b) | token F1 0.385 (30 app questions) | **60.9%** correct, 87.0% correct or partial (23 final questions, reviewed); token F1 0.354 | measured; different question sets |
+| Refusals | 10/10 off-topic | off-topic 4/4; ambiguous 4/4 asked "which paper?"; unanswerable 3/10 refused, 6/10 acceptable | measured |
+| Multi-paper questions | not tested | **0/4** handled (retrieval returns one paper) | measured: open problem |
+| Failure handling | see weakness 5 | health/readiness checks, typed LLM errors, connect/read/total timeouts, malformed and cut-off stream detection, disconnect stops generation, bounded concurrency, request IDs | tested (fake Ollama server, 63 tests) |
+| Indexing | delete + re-add every run | manifest hash: no-op when unchanged, atomic swap when not, never duplicates, refuses an index from another embedding model | tested |
+| CI | none | GitHub Actions: lint + offline tests, retrieval regression gate, Docker build + readiness | **written, not run on GitHub in this session** |
+| Container | builds index at build time | models + data baked in, offline at runtime, health check, non-root | **not built in this session** (registry unreachable) |
+| Cloud deployment | HF Spaces notes (paid) | Cloud Run / VM guide with auth, secrets, monitoring, rollback | documented, **not deployed** |
+
+**Changes, and why**
+
+| Change | Why (evidence) |
+|---|---|
+| New dev/final splits by paper; `ingest.py --split`, `evaluate.py --split` | separate tuning from reporting; the old test set was partly used for tuning |
+| Exact dense search (NumPy) instead of Chroma HNSW | 59/109 dev questions got different results across processes; exact is deterministic and ~20 ms at this size |
+| Reranker scores each chunk by its best paragraph only (`maxp`) | half the latency (p50 2.5 → 1.1 s); dev: −1 question in each scope; final: −0.013 MRR, Hit@5 +1.0 / −0.9 points |
+| "Which paper?" for generic corpus-wide questions | 70% of corpus-wide misses were wrong-paper misses on generic questions; for those, the top paper was right only 19% of the time (dev) |
+| Paper-reference markers (`BIBREF3`) stripped from shown answers | copied into answers on dev; prompt instructions didn't stop it |
+| Answer evaluation with claim-level support review, judge, refusal categories (`answer_eval.py`) | the old citation metric hid unsupported claims |
+| Reliability work in `server.py` / `generate.py` | each item is covered by a test that fails without it |
+| Index manifest, atomic rebuild | repeatable indexing without duplicates; catches embedding-model mismatch |
+
+**Tried and rejected on dev:** rerank depth 50 (+2 questions for +45% latency), weighted RRF, two "paper boost" re-rankings (help specific questions, hurt generic ones more), capping reranker inputs at 256 tokens (+7% speed only), and prompt v3 (didn't fix its target failures and broke one correct answer). Details and numbers: [docs/EVALUATION.md](docs/EVALUATION.md).
+
+**Limitations:** the answer set is small (24 answerable questions on final), all manual labels were made by an AI reviewer (Claude) rather than a person, the automated judge (qwen3:14b) shares the generator's model family, and multi-paper questions remain unsolved. Files for all of it are under `results/v2/` ([index](results/v2/README.md)); setup and commands are in [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
+
+## Round-1 results (Oct 2026, kept for reference)
+
+> These are the original numbers, unchanged. The "test" questions below are the app's own 50 papers, which were also used to compare chunk sizes and to re-run answer prompts, so treat them as optimistic. The round-2 final split above is the clean held-out comparison.
 
 Retrieval quality on **144 questions** over the **50-paper / 1,083-chunk** index. A retrieved
 chunk counts as correct when it contains one of the paragraphs the QASPER annotators marked
@@ -132,16 +186,18 @@ flowchart LR
     end
 
     subgraph Query["Query path (retrieve.py + generate.py)"]
-        U[Question] --> DS[Dense search<br/>top 50]
+        U[Question] --> DS[Exact dense search<br/>top 50]
         U --> BM[BM25 search<br/>top 50]
         E --> DS
         E --> BM
         DS --> F[Reciprocal rank fusion]
         BM --> F
-        F --> R[Cross-encoder rerank<br/>best-passage scores<br/>top 30 → top 5]
+        F --> R[Cross-encoder rerank<br/>best-paragraph scores<br/>top 30 → top 5]
         R --> G{Relevant enough?}
         G -->|no| REF["I can't find this in the papers."]
-        G -->|yes| L[LLM with numbered sources]
+        G -->|yes| W{No paper picked and<br/>question is generic?}
+        W -->|yes| WP["Which paper? (top 3 offered)"]
+        W -->|no| L[LLM with numbered sources]
         L --> CI["Answer with [title, section] citations"]
     end
 
@@ -152,7 +208,7 @@ flowchart LR
 The app and the evaluation script call the **same** `Retriever.retrieve()` function, so the reported scores are the scores of the system people actually use.
 
 - **Chunking (`ingest.py`).** Text is split per section and never across sections or papers. Chunk size is measured with the embedding model's own tokenizer, so chunks really fit in its 512-token window. Character offsets preserve the original casing. Each chunk records which paragraphs it holds, which is how evaluation stays automatic.
-- **Retrieval (`retrieve.py`).** Dense search uses Chroma with cosine similarity on bge-small, with the query instruction prefix the model was trained with. BM25 uses `rank_bm25` over the same "title. section. text" string. The two ranked lists are merged with reciprocal rank fusion (k = 60). RRF uses only ranks, so the two very different score scales never need to be normalised against each other. Reranking uses `cross-encoder/ms-marco-MiniLM-L-6-v2` on the top 30. Each chunk scores the better of its whole text and its best paragraph, and that order is blended back with the hybrid order (see the tuning section above).
+- **Retrieval (`retrieve.py`).** Dense search is an exact cosine search over the bge-small vectors stored in Chroma (round 2; it used Chroma's approximate HNSW search before, which wasn't repeatable), with the query instruction prefix the model was trained with. BM25 uses `rank_bm25` over the same "title. section. text" string. The two ranked lists are merged with reciprocal rank fusion (k = 60). RRF uses only ranks, so the two very different score scales never need to be normalised against each other. Reranking uses `cross-encoder/ms-marco-MiniLM-L-6-v2` on the top 30. Each chunk is scored by its best paragraph (round 1 also scored the whole chunk and kept the better of the two; round 2 dropped that for speed), and that order is blended back with the hybrid order.
 - **Generation (`generate.py`).** The LLM sees the chunks as numbered sources and must cite `[n]` after each claim. Small models get numbers right far more often than long titles. The code then rewrites `[n]` as `[paper title, section]` and drops any citation that doesn't match a retrieved chunk. The system says *"I can't find this in the papers"* in three cases: the reranker's best score is below a calibrated floor, the model says so, or the model still has no valid citation after one repair turn.
 - **LLM backends.** Ollama (free, local), any OpenAI-compatible API (OpenAI, Groq's free tier, …), Anthropic, or an **extractive** fallback that quotes the best sentences and needs no key at all. `LLM_PROVIDER=auto` picks whatever is configured.
 
@@ -163,11 +219,11 @@ Requires Python 3.10+ and about 2 GB of disk (PyTorch plus ~230 MB of models). C
 ```bash
 git clone <your-repo-url> && cd RAG_Project
 python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-dev.txt     # or requirements.txt without the test tools
 
 cp .env.example .env          # then pick an LLM (see below), or leave it on auto
 
-python ingest.py              # download QASPER + models, build the index (~2 min on a laptop)
+python ingest.py              # download QASPER + models, build the index (~2 min on a laptop; re-runs are no-ops)
 python evaluate.py            # retrieval eval -> results/results.csv, results.md
 uvicorn server:app            # open http://localhost:8000
 # (the simpler Streamlit page still works: streamlit run app.py)
@@ -184,8 +240,19 @@ python evaluate.py --modes hybrid_rerank --scopes paper            # re-run one 
 python evaluate.py --skip-retrieval --answers 30                   # answer quality with your LLM
 python experiments.py                                              # dev/test retrieval ablation (cached, resumable)
 python experiments.py --budget 150                                 # ...or in 150-second slices on a slow machine
-pytest -q                                                          # 23 tests: logic, API (fake LLM), headless app
+pytest -q                                                          # 63 tests (most need no index, models or LLM)
+
+# round 2
+python ingest.py --split dev && python ingest.py --split final     # the tuning and held-out papers
+python evaluate.py --split dev --out results/v2/dev/mine           # retrieval on dev
+python failure_analysis.py --split dev --results results/v2/dev/mine
+python bench.py --split dev --limit 60                             # per-stage latency, p50/p95
+python answer_eval.py retrieve --set eval/answer_set_dev.jsonl --out results/v2/answers/mine
+python answer_eval.py generate --out results/v2/answers/mine --provider ollama --model qwen3:8b
+curl localhost:8000/readyz                                         # what's loaded and reachable
 ```
+
+Full commands, versions and file checksums: [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
 
 The ablation works with other models too, e.g. on a machine with a GPU or Apple silicon:
 `EMBED_MODEL=BAAI/bge-base-en-v1.5 RERANK_MODEL=BAAI/bge-reranker-base python experiments.py`
@@ -200,33 +267,36 @@ The ablation works with other models too, e.g. on a machine with a GPU or Apple 
 | OpenAI / Anthropic | a few cents for the whole eval | set `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` |
 | Extractive | free | nothing; this is the fallback when no LLM is configured |
 
-## Deploy to Hugging Face Spaces
+## Deploy
 
-Hugging Face now requires a PRO plan ($9/month) to create Docker or Gradio Spaces; only static Spaces are free. Ollama can't run on a Space either, so a hosted demo uses an API for answers (Groq's free tier works well, e.g. `LLM_MODEL=llama-3.3-70b-versatile`) or falls back to extractive answers.
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) is a step-by-step path for Google Cloud Run or any Docker host: sizing, using a hosted LLM API (Ollama doesn't run there), API-key or platform authentication, secrets in a secret manager, the JSON request logs and which alerts to set on them, and rollback by revision. Nothing has been deployed, and the guide says where costs start.
 
-1. Create a new Space → **Docker** → *Blank*.
-2. Push this repo to the Space (`git remote add space https://huggingface.co/spaces/<you>/<space>` then `git push space main`). The YAML block at the top of this README tells Spaces to use the Dockerfile on port 7860.
-3. In **Settings → Variables and secrets**, add the secret `OPENAI_API_KEY` (your Groq key) and the variables `OPENAI_BASE_URL=https://api.groq.com/openai/v1` and `LLM_MODEL=llama-3.3-70b-versatile` (or set `ANTHROPIC_API_KEY`).
-4. The Docker build runs `python ingest.py`, so the index is baked into the image and the Space starts ready to answer.
-5. The Space serves the same web app. Its model menu shows your API model and the no-LLM option, and the Ollama entry explains that it isn't available there. For a paid API the server always uses the model you configured, whatever the browser asks for, so a public demo can't be pointed at an expensive model.
+The image (`docker build -t paper-rag .`) contains the models, the dataset file and the built index, starts without network access, and exposes `/healthz` and `/readyz` for probes. The README header is also a Hugging Face Spaces config, but Docker Spaces need a paid (PRO) plan as of Oct 2026.
 
 ## Project structure
 
 ```
-config.py          all settings (models, chunk size, paths, LLM), overridable via env/.env
-ingest.py          QASPER -> paragraphs -> chunks -> embeddings -> ChromaDB (+ questions.jsonl)
+config.py          all settings (models, chunk size, paths, LLM, timeouts, auth), overridable via env/.env
+ingest.py          QASPER -> paragraphs -> chunks -> embeddings -> ChromaDB (+ questions); --split app|dev|final; manifest-checked, atomic
 retrieve.py        dense / BM25 / RRF hybrid / cross-encoder rerank behind one retrieve()
 generate.py        prompt, LLM backends, citation rewriting, refusal logic, CLI
-evaluate.py        Hit@1/3/5, MRR, latency per mode & scope; answer F1 + citation accuracy
+evaluate.py        Hit@1/3/5, MRR, right-paper@5, p50/p95 latency per mode & scope (--split, --out, --ce-cache)
+failure_analysis.py  why corpus-wide misses happen (wrong paper / not a candidate / misranked / unreachable)
+answer_eval.py     answer correctness, claim support, citation coverage, refusals (stages: retrieve, generate, judge-jobs, review-sheet, score)
+bench.py           per-stage retrieval latency (dense, BM25, fusion, rerank), p50/p95, with machine details
 experiments.py     dev-tuned / test-reported retrieval ablation (MaxP, fusion, rerank depth, prior)
-server.py          FastAPI app: model discovery, streaming /api/ask (SSE), benchmark numbers
+server.py          FastAPI app: streaming /api/ask (SSE), /healthz, /readyz, request ids, JSON logs, auth, back-pressure
 static/            the web UI: index.html, app.css, app.js (no framework, no build step), fonts
 app.py             the original Streamlit UI (still works, simpler)
-tests/             unit tests, API tests with a fake LLM (test_server.py), headless Streamlit test
-docs/              screenshots
+tests/             63 tests: logic, API with a fake LLM, failure handling against a fake Ollama server,
+                   ingestion consistency, answer-eval helpers, retrieval regression gate (golden/)
+eval/              round-2 answer sets, review labels, question specificity labels, browser relay runner
+scripts/           download_assets.py (models + data for offline use), check_determinism.py
+docs/              EVALUATION.md, REPRODUCIBILITY.md, DEPLOYMENT.md, screenshots
+.github/workflows/ CI: lint + offline tests, retrieval regression, Docker build + readiness
 data/questions.jsonl   the 144 evaluation questions with gold evidence paragraph ids
-results/           results.csv/.md, per-question breakdowns, ablation*.{md,csv}, answer checks
-Dockerfile         CPU-only image for Hugging Face Spaces
+results/           round 1 (unchanged): results.csv/.md, ablations, answer checks; round 2 under results/v2/
+Dockerfile         CPU-only image: models baked in, offline runtime, health check, non-root
 ```
 
 ## Notes and decisions
@@ -234,13 +304,14 @@ Dockerfile         CPU-only image for Hugging Face Spaces
 - **Why QASPER?** It gives full paper text *and* questions with annotated evidence paragraphs, so retrieval can be scored automatically with no hand labelling. 156 questions belong to the first 50 validation papers. 5 of them are unanswerable, 6 have only figures or tables as evidence, and 1 has evidence that doesn't map to a paragraph, which leaves 144.
 - **Loading QASPER.** `allenai/qasper` is an old script-based dataset, and recent `datasets` versions refuse to run it. `ingest.py` reads the Hub's auto-converted Parquet file (`refs/convert/parquet`) instead.
 - **Scoring is strict.** Thanks to the 50-token overlap, a chunk may hold the tail of the previous paragraph. A chunk only "claims" a paragraph when it holds at least half of it (or at least 100 of its tokens), so overlap can't inflate hit rates.
-- **Reproducibility.** Dependencies are pinned, the corpus is the first 50 papers (no random sampling), the answer-eval sample uses seed 42, and LLM calls use temperature 0 where the API supports it. `python ingest.py` always rebuilds the collection from scratch.
-- **Latency** was measured on a 4-core ARM Linux VM with models already loaded. Expect similar or better on a recent laptop.
+- **Reproducibility.** Dependencies are pinned, the corpora are fixed slices (no random sampling), samples use fixed seeds, LLM calls use temperature 0, dense search is exact, and each index carries a manifest hash of its contents. See [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
+- **Latency.** Round 1 was measured on a 4-core ARM Linux VM, round 2 on a 2-core x86 VM (`bench.py` prints the conditions with the numbers). Compare settings measured on the same machine only.
 
 ## What I'd try next
 
-- **Query rewriting.** Rewrite vague questions ("what baselines do they use?") with the LLM, or route them to the most likely paper first. That attacks the corpus-scope gap directly.
-- **Answer faithfulness checks.** Verify each cited sentence against its chunk with an NLI model.
+- **Multi-paper questions.** Diversify the passages for explicitly cross-paper questions (e.g. at most two per paper, eight in total) and re-run the multi-paper set; today it fails 4/4 because retrieval returns one paper.
+- **Unsupported claims.** 4/10 unanswerable questions got confident, cited, unsupported answers. A per-sentence entailment check (NLI model or the judge prompt) before showing an answer could drop or flag those sentences; measure it against `eval/review_final.json`.
+- **A human pass over the review labels** (`results/v2/answers/final/review_sheet.md`) and a larger answer set.
 - **A bigger corpus and a better embedder** (bge-base, e5), plus parent-document retrieval for long sections.
 - **A larger local LLM** (e.g. qwen3:14b) on a machine with more memory, run through the same dev/test split as the prompt comparison.
 

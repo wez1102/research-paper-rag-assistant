@@ -1,0 +1,64 @@
+{
+  "conditions": {
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cores": 2,
+    "torch_threads": 2,
+    "device": "cpu",
+    "python": "3.11.18",
+    "torch": "2.9.1+cu128",
+    "split": "dev",
+    "n_chunks": 926,
+    "n_questions": 60,
+    "repeat": 1,
+    "config": "bge-small-en-v1.5|ms-marco-MiniLM-L-6-v2|cand=30|how=maxp|prior=0.5|rrfw=1.0,1.0|pboost=0.0|maxlen=512",
+    "startup_load_s": 4.16
+  },
+  "results": {
+    "paper": {
+      "dense_s": {
+        "p50_ms": 19.3,
+        "p95_ms": 27.0
+      },
+      "bm25_s": {
+        "p50_ms": 1.1,
+        "p95_ms": 2.1
+      },
+      "fusion_s": {
+        "p50_ms": 0.0,
+        "p95_ms": 0.0
+      },
+      "rerank_s": {
+        "p50_ms": 1092.2,
+        "p95_ms": 1899.6
+      },
+      "total": {
+        "p50_ms": 1112.5,
+        "p95_ms": 1920.1
+      },
+      "rerank_pairs_mean": 42.7
+    },
+    "corpus": {
+      "dense_s": {
+        "p50_ms": 19.5,
+        "p95_ms": 26.1
+      },
+      "bm25_s": {
+        "p50_ms": 1.1,
+        "p95_ms": 2.6
+      },
+      "fusion_s": {
+        "p50_ms": 0.0,
+        "p95_ms": 0.1
+      },
+      "rerank_s": {
+        "p50_ms": 1801.9,
+        "p95_ms": 2437.6
+      },
+      "total": {
+        "p50_ms": 1823.6,
+        "p95_ms": 2458.2
+      },
+      "rerank_pairs_mean": 73.5
+    }
+  }
+}

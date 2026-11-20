@@ -24,6 +24,10 @@ Usage:
     python evaluate.py                    # retrieval eval, writes results/results.csv
     python evaluate.py --chunk-size 256   # same, against the 256-token index
     python evaluate.py --answers 30       # also run the answer-quality check (needs an LLM)
+
+    # Round-2 protocol (see docs/EVALUATION.md): tune on dev, report once on final.
+    python ingest.py --split dev && python evaluate.py --split dev --out results/v2/dev
+    python ingest.py --split final && python evaluate.py --split final --out results/v2/final
 """
 
 from __future__ import annotations
@@ -36,6 +40,9 @@ import statistics
 import string
 import time
 from collections import Counter
+from pathlib import Path
+
+import numpy as np
 
 import pandas as pd
 
@@ -61,10 +68,15 @@ SCOPES = ("corpus", "paper")
 MODE_LABELS = {"dense": "Dense", "hybrid": "Hybrid", "hybrid_rerank": "Hybrid + rerank"}
 
 
-def load_questions() -> list[dict]:
-    path = settings.data_dir / "questions.jsonl"
+# Columns that look numeric but are ids. Without this, pandas reads the paper id
+# "1710.07960" back as the float 1710.0796 (the round-1 per_question.csv has this bug).
+ID_DTYPES = {"question_id": str, "paper_id": str, "config": str}
+
+
+def load_questions(split: str = "app") -> list[dict]:
+    path = settings.questions_path(split)
     if not path.exists():
-        raise SystemExit("data/questions.jsonl is missing - run `python ingest.py` first.")
+        raise SystemExit(f"{path.name} is missing - run `python ingest.py --split {split}` first.")
     return [json.loads(line) for line in path.open()]
 
 
@@ -77,19 +89,36 @@ def first_hit_rank(results: list[RetrievedChunk], q: dict) -> int | None:
     return None
 
 
-def summarize(ranks: list[int | None], latencies: list[float]) -> dict:
+def right_paper_rank(results: list[RetrievedChunk], q: dict) -> int | None:
+    """1-based rank of the first chunk from the question's own paper (any passage)."""
+    for rank, r in enumerate(results, start=1):
+        if r.paper_id == q["paper_id"]:
+            return rank
+    return None
+
+
+def summarize(ranks: list[int | None], latencies: list[float],
+              paper_ranks: list[int | None] | None = None) -> dict:
     n = len(ranks)
     row = {f"hit@{k}": sum(1 for r in ranks if r is not None and r <= k) / n for k in KS}
     row["mrr"] = sum(1.0 / r for r in ranks if r is not None) / n
     row["median_latency_s"] = statistics.median(latencies)
+    row["p95_latency_s"] = float(np.percentile(latencies, 95))
+    if paper_ranks is not None:
+        # "Did we at least find the right paper?" Separates paper identification
+        # from passage ranking when searching the whole corpus.
+        row["paper@1"] = sum(1 for r in paper_ranks if r == 1) / n
+        row["paper@5"] = sum(1 for r in paper_ranks if r is not None) / n
     row["n_questions"] = n
     return row
 
 
 def config_fingerprint() -> str:
     """Everything that changes retrieval results. Rows from other configs are never mixed in."""
-    return (f"{settings.embed_model}|{settings.rerank_model}|cand={settings.rerank_candidates}|"
-            f"how={settings.rerank_how}|prior={settings.rerank_prior}")
+    from ingest import model_tag
+    return (f"{model_tag(settings.embed_model)}|{model_tag(settings.rerank_model)}|cand={settings.rerank_candidates}|"
+            f"how={settings.rerank_how}|prior={settings.rerank_prior}|rrfw={','.join(map(str, settings.rrf_weights))}|"
+            f"pboost={settings.paper_boost}|maxlen={settings.rerank_max_length}")
 
 
 def run_retrieval_eval(retriever: Retriever, questions: list[dict], k: int = 5,
@@ -99,24 +128,52 @@ def run_retrieval_eval(retriever: Retriever, questions: list[dict], k: int = 5,
         # One throwaway query so model warm-up time doesn't pollute the latency numbers.
         retriever.retrieve("warm up", mode=mode, k=k)
         for scope in scopes:
-            ranks, latencies = [], []
+            ranks, latencies, paper_ranks = [], [], []
             for q in questions:
+                timings: dict = {}
                 t0 = time.perf_counter()
                 results = retriever.retrieve(q["question"], mode=mode, k=k,
-                                             paper_id=q["paper_id"] if scope == "paper" else None)
+                                             paper_id=q["paper_id"] if scope == "paper" else None,
+                                             timings=timings)
                 latencies.append(time.perf_counter() - t0)
                 rank = first_hit_rank(results, q)
                 ranks.append(rank)
+                paper_ranks.append(right_paper_rank(results, q))
                 per_question.append({"mode": mode, "scope": scope, "config": config_fingerprint(),
                                      "question_id": q["question_id"],
                                      "question": q["question"], "paper_id": q["paper_id"],
-                                     "first_hit_rank": rank, "latency_s": latencies[-1],
+                                     "first_hit_rank": rank, "right_paper_rank": paper_ranks[-1],
+                                     "latency_s": latencies[-1],
+                                     **{k_: round(v, 5) for k_, v in timings.items()},
                                      "retrieved": " | ".join(r.chunk_id for r in results)})
-            row = {"mode": mode, "scope": scope, **summarize(ranks, latencies)}
+            row = {"mode": mode, "scope": scope,
+                   **summarize(ranks, latencies, paper_ranks if scope == "corpus" else None)}
             summary.append(row)
+            extra = f"  paper@5={row['paper@5']:.3f}" if "paper@5" in row else ""
             print(f"{mode:>14} / {scope:<6}  hit@1={row['hit@1']:.3f}  hit@3={row['hit@3']:.3f}  "
-                  f"hit@5={row['hit@5']:.3f}  mrr={row['mrr']:.3f}  p50={row['median_latency_s']:.3f}s")
+                  f"hit@5={row['hit@5']:.3f}  mrr={row['mrr']:.3f}{extra}  "
+                  f"p50={row['median_latency_s']:.3f}s  p95={row['p95_latency_s']:.3f}s")
     return pd.DataFrame(summary), pd.DataFrame(per_question)
+
+
+def candidate_recall(retriever: Retriever, questions: list[dict], depths=(5, 10, 20, 30, 50, 100)) -> pd.DataFrame:
+    """
+    How deep does the gold passage sit in the first-stage (hybrid) list? If it isn't
+    in the top N at all, no reranker looking at N candidates can recover it. This is
+    what tells us whether rerank depth is worth paying for.
+    """
+    rows = []
+    for scope in SCOPES:
+        found = {d: 0 for d in depths}
+        for q in questions:
+            hits = retriever.hybrid_search(q["question"], max(depths),
+                                           paper_id=q["paper_id"] if scope == "paper" else None)
+            res = [retriever._to_result(cid, s, "rrf") for cid, s in hits]
+            r = first_hit_rank(res, q)
+            for d in depths:
+                found[d] += r is not None and r <= d
+        rows.append({"scope": scope, **{f"recall@{d}": found[d] / len(questions) for d in depths}})
+    return pd.DataFrame(rows)
 
 
 # ---------------------------------------------------------------------------
@@ -189,7 +246,7 @@ def upsert_csv(path, new: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
     laptop) without losing the numbers from earlier runs.
     """
     if path.exists():
-        old = pd.read_csv(path)
+        old = pd.read_csv(path, dtype=ID_DTYPES)
         merged_keys = old[keys].astype(str).agg("|".join, axis=1)
         new_keys = set(new[keys].astype(str).agg("|".join, axis=1))
         old = old[~merged_keys.isin(new_keys)]
@@ -203,16 +260,32 @@ def upsert_csv(path, new: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
 
 def markdown_table(summary: pd.DataFrame, scope: str) -> str:
     """The README table, generated straight from the numbers so it can't drift."""
-    lines = ["| Retrieval mode | Hit@1 | Hit@3 | Hit@5 | MRR | Median latency (s) |",
-             "|---|---|---|---|---|---|"]
+    has_p95 = "p95_latency_s" in summary.columns
+    has_paper = scope == "corpus" and "paper@5" in summary.columns
+    head = "| Retrieval mode | Hit@1 | Hit@3 | Hit@5 | MRR |" + (" Right paper in top 5 |" if has_paper else "")
+    head += " Median latency (s) |" + (" p95 latency (s) |" if has_p95 else "")
+    lines = [head, "|" + "---|" * (head.count("|") - 1)]
     for _, r in summary[summary["scope"] == scope].iterrows():
-        lines.append(f"| {MODE_LABELS[r['mode']]} | {r['hit@1']:.1%} | {r['hit@3']:.1%} | {r['hit@5']:.1%} "
-                     f"| {r['mrr']:.3f} | {r['median_latency_s']:.3f} |")
+        line = (f"| {MODE_LABELS[r['mode']]} | {r['hit@1']:.1%} | {r['hit@3']:.1%} | {r['hit@5']:.1%} "
+                f"| {r['mrr']:.3f} |")
+        if has_paper:
+            line += f" {r['paper@5']:.1%} |"
+        line += f" {r['median_latency_s']:.3f} |"
+        if has_p95:
+            line += f" {r['p95_latency_s']:.3f} |"
+        lines.append(line)
     return "\n".join(lines)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate retrieval (and optionally answers) on QASPER.")
+    parser.add_argument("--split", choices=list(settings.splits), default="app",
+                        help="Which paper slice to evaluate on (build it first with ingest.py --split).")
+    parser.add_argument("--out", default=None, help="Where to write results (default: results/).")
+    parser.add_argument("--ce-cache", default=None,
+                        help="JSON file to memoise cross-encoder scores in (speeds up depth/weight sweeps).")
+    parser.add_argument("--candidate-recall", action="store_true",
+                        help="Also report how deep the gold passage sits in the first-stage list.")
     parser.add_argument("--chunk-size", type=int, default=settings.chunk_size,
                         help="Which index to evaluate (must have been built with ingest.py --chunk-size).")
     parser.add_argument("--modes", nargs="+", choices=MODES, default=list(MODES))
@@ -227,12 +300,25 @@ def main() -> None:
     args = parser.parse_args()
 
     random.seed(settings.seed)
-    settings.results_dir.mkdir(parents=True, exist_ok=True)
-    questions = load_questions()
-    print(f"Evaluating {len(questions)} questions against index '{settings.collection_name(args.chunk_size)}'")
+    out_dir = Path(args.out) if args.out else settings.results_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
+    questions = load_questions(args.split)
+    collection = settings.collection_name(args.chunk_size, args.split)
+    print(f"Evaluating {len(questions)} questions ({args.split} split) against index '{collection}'")
+    print(f"Config: {config_fingerprint()}")
+
+    cache: dict | None = None
+    if args.ce_cache:
+        cache_path = Path(args.ce_cache)
+        cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
 
     need_reranker = "hybrid_rerank" in args.modes or args.answer_mode == "hybrid_rerank"
-    retriever = Retriever(collection_name=settings.collection_name(args.chunk_size), load_reranker=need_reranker)
+    retriever = Retriever(collection_name=collection, load_reranker=need_reranker, score_cache=cache)
+
+    if args.candidate_recall:
+        cr = candidate_recall(retriever, questions)
+        cr.to_csv(out_dir / "candidate_recall.csv", index=False)
+        print(cr.to_string(index=False))
 
     if not args.skip_retrieval:
         run_qs = questions
@@ -243,8 +329,10 @@ def main() -> None:
             print(f"Part {i}/{n}: questions {(i - 1) * size + 1}-{(i - 1) * size + len(run_qs)}")
         _, per_q = run_retrieval_eval(retriever, run_qs, modes=args.modes, scopes=args.scopes)
 
+        if cache is not None:
+            Path(args.ce_cache).write_text(json.dumps(cache))
         suffix = "" if args.chunk_size == settings.chunk_size else f"_chunk{args.chunk_size}"
-        per_all = upsert_csv(settings.results_dir / f"per_question{suffix}.csv", per_q,
+        per_all = upsert_csv(out_dir / f"per_question{suffix}.csv", per_q,
                              ["mode", "scope", "question_id"])
 
         # Rebuild the summary from per-question rows, only where all questions were
@@ -258,21 +346,25 @@ def main() -> None:
                 print(f"{mode}/{scope}: {len(g)}/{len(questions)} questions done with this config")
                 continue
             ranks = [None if pd.isna(r) else int(r) for r in g["first_hit_rank"]]
-            rows.append({"chunk_size": args.chunk_size, "mode": mode, "scope": scope,
-                         **summarize(ranks, list(g["latency_s"]))})
-        results_path = settings.results_dir / f"results{suffix}.csv"
+            p_ranks = None
+            if scope == "corpus" and "right_paper_rank" in g:
+                p_ranks = [None if pd.isna(r) else int(r) for r in g["right_paper_rank"]]
+            rows.append({"split": args.split, "chunk_size": args.chunk_size, "mode": mode, "scope": scope,
+                         **summarize(ranks, list(g["latency_s"]), p_ranks), "config": config_fingerprint()})
+        results_path = out_dir / f"results{suffix}.csv"
         if rows:
             summary = upsert_csv(results_path, pd.DataFrame(rows), ["mode", "scope"])
         elif results_path.exists():
             summary = pd.read_csv(results_path)
         else:
             return
-        with (settings.results_dir / f"results{suffix}.md").open("w") as f:
+        with (out_dir / f"results{suffix}.md").open("w") as f:
             for scope in SCOPES:
                 if scope in set(summary["scope"]):
-                    f.write(f"### Scope: {scope} ({len(questions)} questions, chunk size {args.chunk_size})\n\n")
+                    f.write(f"### Scope: {scope} ({len(questions)} questions, {args.split} split, "
+                            f"chunk size {args.chunk_size})\n\n")
                     f.write(markdown_table(summary, scope) + "\n\n")
-        print(f"\nUpdated results{suffix}.csv / per_question{suffix}.csv / results{suffix}.md in {settings.results_dir}")
+        print(f"\nUpdated results{suffix}.csv / per_question{suffix}.csv / results{suffix}.md in {out_dir}")
 
     if args.answers:
         print(f"\nAnswer evaluation on {args.answers} questions ({args.answer_mode}, scope={args.answer_scope})")
@@ -283,8 +375,8 @@ def main() -> None:
         if tag != "extractive":
             tag += f"_{settings.prompt_version}"      # e.g. answers_ollama_v2.csv
             ans_summary["prompt_version"] = settings.prompt_version
-        df.to_csv(settings.results_dir / f"answers_{tag}.csv", index=False)
-        pd.DataFrame([ans_summary]).to_csv(settings.results_dir / f"answers_summary_{tag}.csv", index=False)
+        df.to_csv(out_dir / f"answers_{tag}.csv", index=False)
+        pd.DataFrame([ans_summary]).to_csv(out_dir / f"answers_summary_{tag}.csv", index=False)
         print(json.dumps(ans_summary, indent=2, default=str))
 
 

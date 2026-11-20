@@ -1,0 +1,110 @@
+question_id,question,specificity,cause,gold_chunks,gold_paragraphs,q_term_overlap
+2f901dab6b757e12763b23ae8b37ae2e517a2271,What languages pairs are used in machine translation?,generic,wrong_paper,1,1,0.6
+b591853e938984e6069d738371500ebdec50d256,What sentiment classification dataset is used?,generic,hit,1,1,0.75
+a130306c6662ff489df13fb3f8faa7cba8c52a21,What pooling function is used?,generic,hit,1,2,0.667
+b1cf5739467ba90059add58d11b73d075a11ec86,Do they report results only on English?,generic,wrong_paper,2,2,0.5
+2ea4347f1992b0b3958c4844681ff0fe4d0dd1dd,What neural network modules are included in NeuronBlocks?,specific,hit,2,6,0.8
+4f253dfced6a749bf57a1b4984dc962ce9550184,"How do the authors evidence the claim that many engineers find it a big overhead to choose from multiple frameworks, models and optimization techniques?",specific,misranked,1,1,0.143
+dc1cec824507fc85ac1ba87882fe1e422ff6cffb,what datasets did they use?,generic,wrong_paper,1,1,0.0
+f428618ca9c017e0c9c2a23515dab30a7660f65f,what ml based approaches were compared?,generic,misranked,1,1,0.25
+8ce11515634236165cdb06ba80b9a36a8b9099a2,Is pre-training effective in their evaluation?,generic,hit,2,2,0.333
+6024039bbd1118c5dab86c41cce1175d99f10a25,What parallel corpus did they use?,generic,hit,1,1,0.667
+de5b6c25e35b3a6c5e40e350fc5e52c160b33490,How much does their model outperform existing models?,generic,wrong_paper,1,1,0.2
+b66c9a4021b6c8529cac1a2b54dacd8ec79afa5f,What do they mean by global and local context?,specific,hit,2,1,0.75
+6bfba3ddca5101ed15256fca75fcdc95a53cece7,What are the 18 propaganda techniques?,specific,hit,19,19,1.0
+df5a4505edccc0ee11349ed6e7958cf6b84c9ed4,What dataset was used?,generic,wrong_paper,1,2,0.5
+fd753ab5177d7bd27db0e0afc12411876ee607df,What was the baseline for this task?,generic,hit,1,2,1.0
+88e62ea7a4d1d2921624b8480b5c6b50cfa5ad42,What is a second order co-ocurrence matrix?,specific,hit,1,1,0.5
+4dcf67b5e7bd1422e7e70c657f6eacccd8de06d3,How many humans participated?,generic,wrong_paper,1,2,0.0
+8b3d3953454c88bde88181897a7a2c0c8dd87e23,What embedding techniques are explored in the paper?,generic,wrong_paper,2,2,0.0
+784ce5a983c5f2cc95a2c60ce66f2a8a50f3636f,Do the authors also try the model on other datasets?,generic,wrong_paper,1,1,0.0
+7705dd04acedaefee30d8b2c9978537afb2040dc,What word level and character level model baselines are used?,specific,not_in_pool,1,2,0.333
+0ee73909ac638903da4a0e5565c8571fc794ab96,How were the human judgements assembled?,generic,wrong_paper,1,1,0.333
+1f07e837574519f2b696f3d6fa3230af0b931e5d,Did they only experiment with one language pair?,generic,hit,1,1,0.0
+5a65ad10ff954d0f27bb3ccd9027e3d8f7f6bb76,Which other approaches do they compare their model with?,generic,wrong_paper,1,1,0.5
+729694a9fe1e05d329b7a4078a596fe606bc5a95,What results do they achieve using their proposed approach?,generic,wrong_paper,1,1,0.4
+1c997c268c68149ae6fb43d83ffcd53f0e7fe57e,How do they combine a deep learning model with a knowledge base?,specific,hit,3,3,1.0
+5cc2daca2a84ddccba9cdd9449e51bb3f64b3dde,What are the models used for the baseline of the three NLP tasks?,generic,wrong_paper,3,5,0.167
+f9bf6bef946012dd42835bf0c547c0de9c1d229f,How is non-standard pronunciation identified?,specific,hit,1,1,0.0
+6a633811019e9323dc8549ad540550d27aa6d972,Is it valid to presume a bad medical wikipedia article should not contain much domain-specific jargon?,specific,hit,1,1,0.273
+6b9b9e5d154cb963f6d921093539490daa5ebbae,What novel PMI variants are introduced?,specific,hit,3,4,0.25
+bc4dca3e1e83f3b4bbb53a31557fc5d8971603b2,What semantic and syntactic tasks are used as probes?,generic,hit,2,2,0.6
+d46c0ea1ba68c649cc64d2ebb6af20202a74a3c7,What are the disadvantages to clipping negative PMI?,specific,hit,1,1,0.5
+6844683935d0d8f588fa06530f5068bf3e1ed0c0,Why are statistics from finite corpora unreliable?,specific,hit,1,1,1.0
+8acab64ba72831633e8cc174d5469afecccf3ae9,what is the domain of the corpus?,generic,wrong_paper,1,1,0.5
+53aa07cc4cc4e7107789ae637dbda8c9f6c1e6aa,what challenges are identified?,generic,hit,5,5,0.5
+72755c2d79210857cfff60bfbcb55f83c71ada51,what is the size of the speech corpus?,generic,wrong_paper,1,1,0.667
+7d2f812cb345bb3ab91eb8cbbdeefd4b58f65569,Which two pairs of ERPs from the literature benefit from joint training?,specific,hit,2,1,0.143
+bd6dc38a9ac8d329114172194b0820766458dacc,What datasets are used?,generic,wrong_paper,2,1,0.5
+3ddff6b707767c3dd54d7104fe88b628765cae58,which datasets did they experiment with?,generic,wrong_paper,1,2,0.0
+0a5ffe4697913a57fda1fd5a188cd5ed59bdc5c7,which languages are explored?,generic,hit,1,1,0.5
+c88a846197b72d25e04ec55f00ee3e72f655504c,Which dataset do they use?,generic,wrong_paper,1,1,1.0
+78292bc57ee68fdb93ed45430d80acca25a9e916,How did they extend LAMA evaluation framework to focus on negation?,specific,hit,1,1,0.333
+443d2448136364235389039cbead07e80922ec5c,What summarization algorithms did the authors experiment with?,generic,hit,1,1,0.5
+aa6d956c2860f58fc9baea74c353c9d985b05605,What evaluation metrics were used for the summarization task?,generic,hit,1,1,0.2
+4c18081ae3b676cc7831403d11bc070c10120f8e,What clustering algorithms were used?,generic,hit,1,1,1.0
+fb3d30d59ed49e87f63d3735b876d45c4c6b8939,What evaluation metrics are looked at for classification tasks?,generic,wrong_paper,2,2,0.2
+197b276d0610ebfacd57ab46b0b29f3033c96a40,What methods were used for sentence classification?,generic,hit,2,2,0.5
+e025061e199b121f2ac8f3d9637d9bf987d65cd5,What is the average length of the sentences?,generic,wrong_paper,1,1,0.667
+61652a3da85196564401d616d251084a25ab4596,What is the size of the real-life dataset?,generic,wrong_paper,1,1,0.0
+14b74ad5a6f5b0506511c9b454e9c464371ef8c4,What are the language pairs explored in this paper?,generic,wrong_paper,1,1,0.5
+5f2bade0881c719ab026bc2e2962e2ada96cdb25,Do they experiment with the toolkits?,generic,not_in_pool,1,1,0.0
+5c88d601e8fca96bffebfa9ef22331ecf31c6d75,Have they made any attempt to correct MRC gold standards according to their findings? ,specific,misranked,1,1,0.222
+71bd5db79635d48a0730163a9f2e8ef19a86cd66,What features are absent from MRC gold standards that can result in potential lexical ambiguity?,specific,hit,2,2,0.667
+9ecde59ffab3c57ec54591c3c7826a9188b2b270,What modern MRC gold standards are analyzed?,specific,misranked,1,1,0.6
+005cca3c8ab6c3a166e315547a2259020f318ffb,How does proposed qualitative annotation schema looks like?,generic,hit,2,2,0.5
+bcc0cd4e262f2db4270429ab520971bcf39414cf,How many tweets were collected?,generic,hit,1,1,0.333
+f641f561ad2ea2794a52e4e4bdd62e1f353ab797,What language is explored in this paper?,generic,wrong_paper,1,1,0.0
+af34051bf3e628c1e2a00b110bb84e5f018b419f,What are the baselines?,generic,hit,2,5,1.0
+022c365a14fdec406c7a945a1a18e7e79df37f08,What is the attention module pretrained on?,generic,not_in_pool,1,1,0.0
+5260cb56b7d127772425583c5c28958c37cb9bea,How long of dialog history is captured?,specific,hit,2,2,0.5
+9b97805a0c093df405391a85e4d3ab447671c86a,What evaluation metrics were used?,generic,wrong_paper,1,1,0.667
+38f58f13c7f23442d5952c8caf126073a477bac0,What was the score of the proposed model?,generic,misranked,1,1,0.667
+7ee5c45b127fb284a4a9e72bb9b980a602f7445a,What was the previous best model?,generic,hit,2,2,1.0
+ddf5e1f600b9ce2e8f63213982ef4209bab01fd8,Which datasets did they use for evaluation?,generic,wrong_paper,1,2,0.0
+27275fe9f6a9004639f9ac33c3a5767fea388a98,What hyperparameters are explored?,generic,hit,1,1,0.5
+ef3567ce7301b28e34377e7b62c4ec9b496f00bf,What Named Entity Recognition dataset is used?,generic,wrong_paper,1,1,0.4
+7595260c5747aede0b32b7414e13899869209506,What sentiment analysis dataset is used?,generic,wrong_paper,1,1,1.0
+c2d1387e08cf25cb6b1f482178cca58030e85b70,Do they test both skipgram and c-bow?,specific,misranked,1,1,0.25
+5a22293b055f5775081d6acdc0450f7bd5f5de04,What is the state-of-the-art model for the task?,generic,wrong_paper,2,1,0.333
+03c967763e51ef2537793db7902e2c9c17e43e95,What is the strong baseline?,generic,wrong_paper,3,2,0.5
+26327ccebc620a73ba37a95aabe968864e3392b2,what aspects of conversation flow do they look at?,specific,hit,3,3,0.5
+ababb79dd3c301f4541beafa181f6a6726839a10,what debates dataset was used?,specific,hit,1,1,0.333
+8eefa116e3c3d3db751423cc4095d1c4153d3a5f,what standard dataset were used?,generic,hit,1,2,0.667
+a778b8204a415b295f73b93623d09599f242f202,What is the Random Kitchen Sink approach?,specific,hit,1,2,0.5
+642e8cf1d39faa1cd985d16750cdc6696c52db2f,what are the baseline systems?,generic,misranked,1,3,0.5
+493e971ee3f57a821ef1f67ef3cd47ade154e7c4,What word embeddings do they test?,generic,hit,3,3,0.667
+8dd8e5599fc56562f2acbc16dd8544689cddd938,How do they define similar equations?,specific,hit,1,1,0.667
+abe2393415e533cb06311e74ed1c5674cff8571f,What evaluation criteria and metrics were used to evaluate the generated text?,generic,hit,6,6,0.714
+00c57e45ac6afbdfa67350a57e81b4fad0ed2885,Do they evaluate only on English datasets?,generic,wrong_paper,1,1,0.0
+22714f6cad2d5c54c28823e7285dc85e8d6bc109,What are the three steps to feature elimination?,specific,hit,1,4,0.5
+82642d3111287abf736b781043d49536fe48c350,How is the dataset annotated?,generic,hit,1,1,1.0
+5a81732d52f64e81f1f83e8fd3514251227efbc7,What dataset is used for this study?,generic,hit,1,1,0.667
+9a8b9ea3176d30da2453cac6e9347737c729a538,what were their performance results?,generic,hit,1,1,0.0
+4477bb513d56e57732fba126944073d414d1f75f,where did they obtain the annotated clinical notes from?,specific,hit,1,1,0.5
+1b23c4535a6c10eb70bbc95313c465e4a547db5e,Which architecture do they use for the encoder and decoder?,generic,hit,2,3,1.0
+0a75a52450ed866df3a304077769e1725a995bb7,How does their decoder generate text?,generic,wrong_paper,3,3,0.333
+fd0a3e9c210163a55d3ed791e95ae3875184b8f8,Which dataset do they use?,generic,wrong_paper,2,2,0.0
+c37f65c9f0d543a35c784263b79236ccf1c44fac,What model is used to encode the images?,generic,hit,2,2,0.75
+584af673429c7f8621c6bf83362a37048daa0e5d,How is the sequential nature of the story captured?,specific,hit,2,2,0.25
+1be54c5b3ea67d837ffba2290a40c1e720d9587f,Is the position in the sequence part of the input?,generic,misranked,1,1,0.5
+b08f88d1facefceb87e134ba2c1fa90035018e83,Do the decoder LSTMs all have the same weights?,generic,hit,1,1,0.4
+b06512c17d99f9339ffdab12cedbc63501ff527e,Is fine-tuning required to incorporate these embeddings into existing models?,generic,hit,1,1,0.667
+fd8e23947095fe2230ffe1a478945829b09c8c95,How are meaningful chains in the graph selected?,specific,not_in_pool,3,3,0.0
+3611a72f754de1e256fbd25b012197e1c24e8470,Do they remove seasonality from the time series?,specific,hit,1,1,0.0
+4c07c33dfaf4f3e6db55e377da6fa69825d0ba15,What is the dimension of the embeddings?,generic,wrong_paper,1,1,0.0
+b1ce129678e37070e69f01332f1a8587e18e06b0,What dataset is used to train the model?,generic,wrong_paper,1,1,0.25
+7fb27d8d5a8bb351f97236a1f6dcd8b2613b16f1,What is the previous state of the art?,generic,hit,1,1,1.0
+0689904db9b00a814e3109fb1698086370a28fa2,Which text embedding methodologies are used?,generic,misranked,3,2,0.5
+cc354c952b5aaed2d4d1e932175e008ff2d801dd,Which race and gender are given higher sentiment intensity predictions?,specific,hit,2,2,0.429
+0f12dc077fe8e5b95ca9163cea1dd17195c96929,"What criteria are used to select the 8,640 English sentences?",specific,hit,2,2,0.429
+2ddb51b03163d309434ee403fef42d6b9aecc458,what were the baselines?,generic,wrong_paper,1,1,0.0
+e587559f5ab6e42f7d981372ee34aebdc92b646e,what competitive results did they obtain?,generic,not_in_pool,2,2,0.333
+f68508adef6f4bcdc0cc0a3ce9afc9a2b6333cc5,By how much is performance improved with multimodality?,specific,misranked,1,2,0.25
+5563a3538d311c979c2fb83c1cc9afc66ff6fffc,Is collected multimodal in cabin dataset public?,specific,hit,1,1,0.4
+91bc8c0bc1634045177065536dd311f89134630b,Is the model tested against any baseline?,generic,wrong_paper,2,2,0.2
+fe1dcd6ef1f8618bbceee418f07cafe63a8efe08,What is the language model combination technique used in the paper?,generic,misranked,1,2,0.5
+53f74250948015c394e7b8438a2041fdeb330911,What are the deep learning architectures used in the task?,generic,wrong_paper,1,1,0.2
+bdc91d1283a82226aeeb7a2f79dbbc57d3e84a1a,How much is performance improved on NLI?,generic,hit,1,1,0.25
+7b4fb6da74e6bd1baea556788a02969134cf0800,Do they train their model starting from a checkpoint?,generic,wrong_paper,1,2,0.25
+bc31a3d2f7c608df8c019a64d64cb0ccc5669210,What BERT model do they test?,generic,hit,1,1,0.333

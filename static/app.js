@@ -58,14 +58,35 @@ const REFUSAL_WHY = {
   low_relevance: "None of the passages it found looked related to the question, so no model was asked.",
   model_declined: "The model read the passages in the margin and didn't find an answer in them.",
   no_citations: "The model answered without pointing to any source, so the answer was held back.",
+  needs_paper: "Questions like this one mean a particular paper. Pick the paper and the question is asked again:",
 };
 
 // ---------------------------------------------------------------------------
 // Setup
 // ---------------------------------------------------------------------------
 
+// If the server was started with API_KEYS, every /api call needs a key. We ask for
+// it once, keep it in this browser, and ask again only if the server rejects it.
+function authHeaders() {
+  let key = "";
+  try { key = localStorage.getItem("rag.apiKey") || ""; } catch { /* storage blocked */ }
+  return key ? { Authorization: `Bearer ${key}` } : {};
+}
+
+async function apiFetch(url, opts = {}, retried = false) {
+  const res = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), ...authHeaders() } });
+  if (res.status === 401 && !retried) {
+    const key = window.prompt("This deployment needs an access key:");
+    if (key) {
+      try { localStorage.setItem("rag.apiKey", key.trim()); } catch { /* storage blocked */ }
+      return apiFetch(url, opts, true);
+    }
+  }
+  return res;
+}
+
 async function getJSON(url) {
-  const res = await fetch(url);
+  const res = await apiFetch(url);
   if (!res.ok) throw new Error(`${url} returned ${res.status}`);
   return res.json();
 }
@@ -197,7 +218,7 @@ async function ask() {
   };
 
   try {
-    const res = await fetch("/api/ask", {
+    const res = await apiFetch("/api/ask", {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
     });
     if (!res.ok) {
@@ -208,7 +229,14 @@ async function ask() {
       } catch { /* keep the generic message */ }
       throw new Error(detail);
     }
-    await readEvents(res, event => turn.handle(event, model));
+    // A stream that stops without a "final" or "error" event was cut off (server
+    // restarted, network dropped). Say so rather than leaving a half answer looking done.
+    let finished = false;
+    await readEvents(res, event => {
+      if (event.type === "final" || event.type === "error") finished = true;
+      turn.handle(event, model);
+    });
+    if (!finished) throw new Error("The connection dropped before the answer was finished. Please ask again.");
   } catch (err) {
     turn.handle({ type: "error", message: err.message });
   } finally {
@@ -300,7 +328,21 @@ function newTurn(question) {
   function finish(ans) {
     if (ans.refused) {
       answer.dataset.state = "refused";
-      bodyEl.innerHTML = `<p>${esc(ans.text)}</p><p class="refusal-why">${esc(REFUSAL_WHY[ans.reason] || "")}</p>`;
+      if (ans.reason === "needs_paper") {
+        // "Which paper?" - offer the likely ones as buttons that re-ask with that paper picked.
+        const picks = (ans.candidates || []).map(c =>
+          `<li><button type="button" class="pick-paper" data-id="${esc(c.paper_id)}">${esc(c.title)}</button></li>`).join("");
+        bodyEl.innerHTML = `<p>${esc("This question doesn't say which paper it's about.")}</p>` +
+          `<p class="refusal-why">${esc(REFUSAL_WHY.needs_paper)}</p><ul class="paper-picks">${picks}</ul>`;
+        bodyEl.querySelectorAll(".pick-paper").forEach(btn => btn.addEventListener("click", () => {
+          els.paper.value = btn.dataset.id;
+          save({ paper: els.paper.value });
+          els.question.value = question;
+          ask();
+        }));
+      } else {
+        bodyEl.innerHTML = `<p>${esc(ans.text)}</p><p class="refusal-why">${esc(REFUSAL_WHY[ans.reason] || "")}</p>`;
+      }
       markCited(list, [], "", chunks, question);     // nothing was used, so nothing looks cited
     } else {
       answer.dataset.state = "done";

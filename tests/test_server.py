@@ -28,7 +28,7 @@ class FakeRetriever:
     def papers(self):
         return [("p1", "Learning Autocomplete Systems as a Communication Game"), ("p2", "Another Paper")]
 
-    def retrieve(self, question, mode="hybrid_rerank", k=None, paper_id=None):
+    def retrieve(self, question, mode="hybrid_rerank", k=None, paper_id=None, timings=None):
         score = -11.0 if "France" in question else 4.2
         chunks = [
             RetrievedChunk("p1-001", "p1", self.papers()[0][1], "Experiments > User study",
@@ -44,6 +44,8 @@ def client(monkeypatch):
     from fastapi.testclient import TestClient
 
     server.state["retriever"] = FakeRetriever()
+    server.state["load_error"] = None
+    server._gen_slots = None              # fresh semaphore for this test's event loop
     monkeypatch.setattr(server, "ollama_models", lambda: [
         {"name": "qwen3:8b", "size_gb": 5.2, "params": "8.2B", "quant": "Q4_K_M"}])
     monkeypatch.setattr(server, "resolve_provider", lambda: "ollama")
@@ -119,6 +121,7 @@ def test_llm_errors_reach_the_ui_as_an_error_event(client, monkeypatch):
     monkeypatch.setattr(generate, "stream_llm", broken)
     evs = events(client.post("/api/ask", json={"question": "How many?", "provider": "ollama", "model": "qwen3:8b"}))
     assert evs[-1]["type"] == "error" and "out of memory" in evs[-1]["message"]
+    assert evs[-1]["request_id"]                              # so the failure can be found in the logs
 
 
 def test_think_tags_are_stripped_even_when_split_across_chunks():

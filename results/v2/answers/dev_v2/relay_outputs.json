@@ -1,0 +1,191 @@
+{
+ "dev-ans00": {
+  "content": "The authors experimented with ILP-based summarization and several summarization algorithms provided by the Sumy package. [1]",
+  "sha1": "bdc704c9613c3436c588b8dcc16bfc74f17d43a4",
+  "ttft_s": 14.193,
+  "total_s": 15.492,
+  "eval_count": 25,
+  "prompt_eval_count": 1739,
+  "load_duration_s": 5.464
+ },
+ "dev-ans01": {
+  "content": "MemNNs (Memory Neural Networks) are used as the word-level model baseline, while character-level models are used as the baseline for character-level modeling [2].",
+  "sha1": "1b7c7a2ef42a0e694746eafe5ec6dfd4269605da",
+  "ttft_s": 9.286,
+  "total_s": 11.107,
+  "eval_count": 34,
+  "prompt_eval_count": 2108,
+  "load_duration_s": 0.008
+ },
+ "dev-ans02": {
+  "content": "No [1].",
+  "sha1": "75357d0a2c17ec720cb4cc6c8bb145f608d52bb8",
+  "ttft_s": 6.697,
+  "total_s": 6.92,
+  "eval_count": 5,
+  "prompt_eval_count": 1593,
+  "load_duration_s": 0.003
+ },
+ "dev-ans03": {
+  "content": "They use an encoder with several convolutional layers followed by NIN layers and deep bidirectional LSTM at the higher part, and a decoder with a standard deep unidirectional LSTM with global attention [1].",
+  "sha1": "db3d9fb1240b356d182fd1738f347f2054169285",
+  "ttft_s": 7.634,
+  "total_s": 9.872,
+  "eval_count": 42,
+  "prompt_eval_count": 1704,
+  "load_duration_s": 0.003
+ },
+ "dev-ans04": {
+  "content": "I can't find this in the papers.",
+  "sha1": "5ab0b9bbcac234e0189c731140b526cc1f7cc9b5",
+  "ttft_s": 3.578,
+  "total_s": 4.058,
+  "eval_count": 10,
+  "prompt_eval_count": 885,
+  "load_duration_s": 0.002
+ },
+ "dev-ans05": {
+  "content": "The parallel corpora used were the Asian Scientific Paper Excerpt Corpus (ASPEC) BIBREF0 and NTCIR PatentMT Parallel Corpus BIBREF1 [1].",
+  "sha1": "7e22c854decf74001a9ae6aa02333e462f035f65",
+  "ttft_s": 6.782,
+  "total_s": 8.667,
+  "eval_count": 37,
+  "prompt_eval_count": 1554,
+  "load_duration_s": 0.002
+ },
+ "dev-ans07": {
+  "content": "The strong baseline is Conditional Copy (CC) [2].",
+  "sha1": "94bde9226c3fe6edc36ae1590ff736e56169826e",
+  "ttft_s": 8.444,
+  "total_s": 9.235,
+  "eval_count": 13,
+  "prompt_eval_count": 1855,
+  "load_duration_s": 0.001
+ },
+ "dev-ans08": {
+  "content": "The 18 propaganda techniques are listed in the paper, but the specific list is not provided in the given sources. The techniques include logical fallacies and appeals to emotions, with examples such as whataboutism, red herring, and name calling [3]. For the complete list, refer to BIBREF10 [1].",
+  "sha1": "d075f220d58524bc4fe2b0119f092f4706faa994",
+  "ttft_s": 5.281,
+  "total_s": 8.887,
+  "eval_count": 69,
+  "prompt_eval_count": 1239,
+  "load_duration_s": 0.005
+ },
+ "dev-ans09": {
+  "content": "The average length of the sentences is 15.5 words [1].",
+  "sha1": "39e3894a4489a34311a7053506f293bb3d4b4289",
+  "ttft_s": 8.419,
+  "total_s": 9.277,
+  "eval_count": 17,
+  "prompt_eval_count": 1855,
+  "load_duration_s": 0.001
+ },
+ "dev-ans10": {
+  "content": "They test Bernoulli embeddings (b-emb) BIBREF1 , continuous bag-of-words (CBOW) BIBREF5 , Distributed Memory version of Paragraph Vector (PV-DM) BIBREF11 and the Global Vectors (GloVe) BIBREF6 model [2].",
+  "sha1": "ffa893439acd93d5e11d1f63e3ea7b16031346cb",
+  "ttft_s": 6.505,
+  "total_s": 10.019,
+  "eval_count": 65,
+  "prompt_eval_count": 1485,
+  "load_duration_s": 0.002
+ },
+ "dev-ans11": {
+  "content": "Seven machine learning based classifiers were compared: Multi-Layer Perceptron (MLP), Naive Bayes Classifier (NBC), Support Vector Machine (SVM), Gradient Boosting Classifier (GBC), Stochastic Gradient Descent (SGD), K Nearest Neighbour (K-NN) and Random Forest (RF) [1].",
+  "sha1": "0768a036a19f29070194f2a06b1860f04189c2d2",
+  "ttft_s": 6.768,
+  "total_s": 10.434,
+  "eval_count": 70,
+  "prompt_eval_count": 1553,
+  "load_duration_s": 0.002
+ },
+ "dev-ans12": {
+  "content": "Groningen Meaning Bank (GMB) [3].",
+  "sha1": "51477add0c4100092e67559e285f545300c09a7d",
+  "ttft_s": 9.664,
+  "total_s": 10.321,
+  "eval_count": 13,
+  "prompt_eval_count": 2095,
+  "load_duration_s": 0.003
+ },
+ "dev-ans13": {
+  "content": "No [3]. The paper suggests that domain-specific features, including jargon, are important for quality evaluation, implying that their absence does not necessarily indicate a bad article.",
+  "sha1": "9b9d013e3c444bd277c836bed8a2682af23af0e4",
+  "ttft_s": 8.941,
+  "total_s": 10.797,
+  "eval_count": 35,
+  "prompt_eval_count": 1966,
+  "load_duration_s": 0.003
+ },
+ "dev-ans14": {
+  "content": "NeuronBlocks includes the following neural network modules: RNN, CNN, QRNN, Transformer, Highway network, Encoder Decoder architecture, Linear/Bi-linear Attention, Full Attention, Bidirectional attention flow, Dropout, Layer Norm, Batch Norm, Focal Loss, AUC, Accuracy, Precision/Recall, F1, MSE/RMSE, ExactMatch [1].",
+  "sha1": "f514097d6a2d655c783775c81d00f1ef7516461e",
+  "ttft_s": 6.819,
+  "total_s": 10.923,
+  "eval_count": 77,
+  "prompt_eval_count": 1532,
+  "load_duration_s": 0.002
+ },
+ "dev-ans15": {
+  "content": "The global context refers to the representation of the whole document, while the local context refers to the topic or section of the document to which a sentence belongs [3]. These two types of context are combined with the sentence representation to determine if the sentence should be included in the summary [1].",
+  "sha1": "ceb42c300459822974e539e801db6d796ec2b3a3",
+  "ttft_s": 7.613,
+  "total_s": 10.685,
+  "eval_count": 59,
+  "prompt_eval_count": 1718,
+  "load_duration_s": 0.005
+ },
+ "dev-mul00": {
+  "content": "The speech recognition papers train or evaluate on LibriSpeech, Wall Street Journal (WSJ), TED-LIUM2, ST-TED, Spoken-SQuAD, and Mapudungun datasets [1][2][3][5].",
+  "sha1": "7e0bc5508c0eae66776b638da9287073ca521325",
+  "ttft_s": 6.413,
+  "total_s": 9.076,
+  "eval_count": 51,
+  "prompt_eval_count": 1453,
+  "load_duration_s": 0.001
+ },
+ "dev-mul01": {
+  "content": "Vietnamese and Mapudungun [1][5].",
+  "sha1": "cd3733aa50e5c399262c97be70d86c3c2c335b0c",
+  "ttft_s": 3.909,
+  "total_s": 4.55,
+  "eval_count": 13,
+  "prompt_eval_count": 975,
+  "load_duration_s": 0.002
+ },
+ "dev-una00": {
+  "content": "The use of morphological segmentation improved the efficacy of the attention mechanism [1].",
+  "sha1": "f571b1785bd974bb2799ea20e5fa14c77a03b938",
+  "ttft_s": 9.066,
+  "total_s": 9.93,
+  "eval_count": 17,
+  "prompt_eval_count": 1986,
+  "load_duration_s": 0.002
+ },
+ "dev-una01": {
+  "content": "A node in the network approach represents a state. [2]",
+  "sha1": "22407937de0f7ada148a1da2bba1bdc6334fb1e0",
+  "ttft_s": 9.436,
+  "total_s": 10.13,
+  "eval_count": 14,
+  "prompt_eval_count": 2056,
+  "load_duration_s": 0.002
+ },
+ "dev-una02": {
+  "content": "The RKS approach achieved a maximum accuracy of 99.53% using Fasttext features, which is a benchmarking result when compared to the literature [4]. The top 5 teams of sub-task A achieved a maximum f1-score of 82.9% [1]. The RKS approach improved the results compared to other methods [5].",
+  "sha1": "a3406929215836c7024dd5754c423912e6d6db86",
+  "ttft_s": 5.772,
+  "total_s": 9.648,
+  "eval_count": 75,
+  "prompt_eval_count": 1328,
+  "load_duration_s": 0.002
+ },
+ "dev-una03": {
+  "content": "The performance reported for the best models is 4.85% WER on the VLSP 2018 data set [1] and 15.09% WER on the VLSP 2019 data set [1].",
+  "sha1": "c134a6a4d5922cde1196d4dca68842948bf01ead",
+  "ttft_s": 3.355,
+  "total_s": 6.128,
+  "eval_count": 55,
+  "prompt_eval_count": 848,
+  "load_duration_s": 0.002
+ }
+}
